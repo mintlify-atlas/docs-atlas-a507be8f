@@ -1,0 +1,223 @@
+---
+title: "Size Token Reference"
+description: "Complete reference for Primer size tokens: control sizing, stack spacing, border radius, border width, z-index, and breakpoints."
+---
+
+Size tokens define consistent dimensions across controls, layout containers, and visual elements. All tokens are CSS custom properties and use the `dimension` type.
+
+---
+
+## Control size tokens
+
+Control size tokens define the height, padding, and internal gap for interactive elements at each size variant. They follow the patterns `--control-[size]-size`, `--control-[size]-paddingBlock`, and `--control-[size]-paddingInline-[density]`.
+
+### Overall height
+
+| Token | Value | Description |
+|---|---|---|
+| `--control-xsmall-size` | 24px | Total height for xsmall controls |
+| `--control-small-size` | 28px | Total height for small controls |
+| `--control-medium-size` | 32px | Total height for medium controls (default) |
+| `--control-large-size` | 40px | Total height for large controls |
+| `--control-xlarge-size` | 48px | Total height for xlarge controls |
+
+### Block padding (top/bottom)
+
+| Token | Value | Description |
+|---|---|---|
+| `--control-xsmall-paddingBlock` | 2px | Vertical padding for xsmall controls |
+| `--control-small-paddingBlock` | 4px | Vertical padding for small controls |
+| `--control-medium-paddingBlock` | 6px | Vertical padding for medium controls |
+| `--control-large-paddingBlock` | 10px | Vertical padding for large controls |
+| `--control-xlarge-paddingBlock` | 14px | Vertical padding for xlarge controls |
+
+### Inline padding (left/right) by density
+
+Each size variant has three density options — condensed, normal, and spacious — for use in different UI contexts.
+
+| Token | Condensed | Normal | Spacious |
+|---|---|---|---|
+| `--control-xsmall-paddingInline-*` | 4px | 8px | 12px |
+| `--control-small-paddingInline-*` | 8px | 12px | 16px |
+| `--control-medium-paddingInline-*` | 8px | 12px | 16px |
+| `--control-large-paddingInline-*` | 8px | 12px | 16px |
+| `--control-xlarge-paddingInline-*` | 8px | 12px | 16px |
+
+For example: `--control-medium-paddingInline-normal`, `--control-small-paddingInline-condensed`.
+
+### Internal gap
+
+| Token | Value | Description |
+|---|---|---|
+| `--control-xsmall-gap` | 4px | Gap between icon and label in xsmall controls |
+| `--control-small-gap` | 4px | Gap between icon and label in small controls |
+| `--control-medium-gap` | 8px | Gap between icon and label in medium controls |
+| `--control-large-gap` | 8px | Gap between icon and label in large controls |
+| `--control-xlarge-gap` | 8px | Gap between icon and label in xlarge controls |
+
+### Minimum touch target
+
+| Token | Value | Description |
+|---|---|---|
+| `--control-minTarget-fine` | 16px | Minimum size for precise pointer (mouse) |
+| `--control-minTarget-coarse` | 44px | Minimum size for imprecise pointer (touch) — required for accessibility |
+
+---
+
+## Stack tokens
+
+Stack tokens provide consistent spacing inside layout containers. Use them with the `Stack` component or any flex/grid container.
+
+### Gap tokens
+
+Control the space between items inside a stack.
+
+| Token | Value | Utility class | Description |
+|---|---|---|---|
+| `--stack-gap-condensed` | 8px | `.gap-2` | Tight spacing for dense lists |
+| `--stack-gap-normal` | 16px | `.gap-3` | Standard spacing for most layouts |
+| `--stack-gap-spacious` | 24px | `.gap-4` | Generous spacing for prominent sections |
+
+### Padding tokens
+
+Control the internal padding of a stack container.
+
+| Token | Value | Utility class | Description |
+|---|---|---|---|
+| `--stack-padding-condensed` | 8px | `.p-2` | Tight internal padding |
+| `--stack-padding-normal` | 16px | `.p-3` | Standard internal padding |
+| `--stack-padding-spacious` | 24px | `.p-4` | Generous internal padding |
+
+---
+
+## Control stack gap tokens
+
+Use these when grouping related controls (button groups, toolbars, form field rows). They follow the pattern `--controlStack-[size]-gap-[density]`.
+
+| Token | Value | Description |
+|---|---|---|
+| `--controlStack-small-gap-auto` | 8px | Auto gap for small control groups |
+| `--controlStack-small-gap-condensed` | 8px | Condensed gap for small control groups |
+| `--controlStack-small-gap-spacious` | 16px | Spacious gap for small control groups |
+| `--controlStack-medium-gap-auto` | 8px | Auto gap for medium control groups |
+| `--controlStack-medium-gap-condensed` | 8px | Condensed gap for medium control groups |
+| `--controlStack-medium-gap-spacious` | 12px | Spacious gap for medium control groups |
+| `--controlStack-large-gap-auto` | 8px | Auto gap for large control groups |
+| `--controlStack-large-gap-condensed` | 8px | Condensed gap for large control groups |
+| `--controlStack-large-gap-spacious` | 12px | Spacious gap for large control groups |
+
+---
+
+## Overlay size tokens
+
+Overlay tokens size modals, dialogs, popovers, and dropdown menus.
+
+### Width
+
+| Token | Value | Description |
+|---|---|---|
+| `--overlay-width-xsmall` | 192px | Narrow menus and small tooltips |
+| `--overlay-width-small` | 320px | Standard dropdown menus |
+| `--overlay-width-medium` | 480px | Dialog overlays |
+| `--overlay-width-large` | 640px | Wide dialogs |
+| `--overlay-width-xlarge` | 960px | Complex modals |
+
+### Height
+
+| Token | Value | Description |
+|---|---|---|
+| `--overlay-height-small` | 256px | Short overlays |
+| `--overlay-height-medium` | 320px | Standard overlay height |
+| `--overlay-height-large` | 432px | Tall overlays |
+| `--overlay-height-xlarge` | 600px | Maximum constrained height |
+
+### Overlay padding and layout
+
+| Token | Value | Description |
+|---|---|---|
+| `--overlay-padding-condensed` | 8px | Tight overlay padding |
+| `--overlay-padding-normal` | 16px | Standard overlay padding |
+| `--overlay-paddingBlock-condensed` | 4px | Compact vertical padding for overlay items |
+| `--overlay-paddingBlock-normal` | 12px | Standard vertical padding for overlay items |
+| `--overlay-borderRadius` | (medium) | Border radius for overlays; aliases `--borderRadius-medium` |
+| `--overlay-offset` | 4px | Distance between trigger and overlay |
+
+---
+
+## Border radius tokens
+
+Border radius tokens define consistent corner rounding. They follow the pattern `--borderRadius-[size]`.
+
+| Token | Description |
+|---|---|
+| `--borderRadius-small` | Subtle rounding for compact elements |
+| `--borderRadius-medium` | Standard rounding for cards and overlays |
+| `--borderRadius-large` | Pronounced rounding for prominent elements |
+| `--borderRadius-full` | Fully rounded (pill/circle shape) |
+
+---
+
+## Border width tokens
+
+Border width tokens define stroke widths for borders and focus indicators.
+
+| Token | Value | Description |
+|---|---|---|
+| `--borderWidth-default` | 1px | Default border width; alias of `--borderWidth-thin` |
+| `--borderWidth-thin` | 1px | Standard 1px border for most dividers and outlines |
+| `--borderWidth-thick` | 2px | 2px border for focus indicators and selected states |
+| `--borderWidth-thicker` | 4px | 4px border for maximum emphasis — use sparingly |
+
+### Focus outline tokens
+
+| Token | Value | Description |
+|---|---|---|
+| `--outline-focus-offset` | -2px | Inset offset for keyboard focus ring |
+| `--outline-focus-width` | 2px | Width for keyboard focus ring (WCAG 2.4.7) |
+
+---
+
+## Spinner size tokens
+
+| Token | Value | Description |
+|---|---|---|
+| `--spinner-size-small` | 16px | Inline loading indicator |
+| `--spinner-size-medium` | 32px | Button and card loading indicator |
+| `--spinner-size-large` | 64px | Full-page loading state |
+| `--spinner-strokeWidth-default` | 2px | Spinner stroke thickness |
+
+---
+
+## Z-index tokens
+
+Z-index tokens establish the stacking order across the UI. They follow the pattern `--zIndex-[layer]`.
+
+| Token | Description |
+|---|---|
+| `--zIndex-base` | Default stacking context |
+| `--zIndex-dropdown` | Dropdown menus and select menus |
+| `--zIndex-sticky` | Sticky headers and sidebars |
+| `--zIndex-overlay` | Modals, dialogs, and drawers |
+| `--zIndex-toast` | Toast notifications above overlays |
+| `--zIndex-tooltip` | Tooltips above all other content |
+
+---
+
+## Breakpoint tokens
+
+Breakpoint tokens define responsive layout thresholds. They follow the pattern `--breakpoint-[name]`.
+
+| Token | Description |
+|---|---|
+| `--breakpoint-xsmall` | Smallest breakpoint (narrow mobile) |
+| `--breakpoint-small` | Mobile breakpoint |
+| `--breakpoint-medium` | Tablet breakpoint |
+| `--breakpoint-large` | Desktop breakpoint |
+| `--breakpoint-xlarge` | Wide desktop breakpoint |
+
+---
+
+## Related
+
+- [Spacing overview](/tokens/spacing) — conceptual guidance on using size tokens
+- [Border and shadow tokens](/tokens/border-shadow) — box shadow and border radius details

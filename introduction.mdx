@@ -1,0 +1,119 @@
+---
+title: "Introduction"
+description: "Primer Primitives provides the foundational design tokens — color, typography, spacing, motion, shadows, and borders — that power GitHub's Primer design system."
+---
+
+## What is Primer Primitives?
+
+`@primer/primitives` is the single source of truth for all raw design decisions in GitHub's [Primer](https://github.com/primer/primer) design system. It ships as CSS custom properties (variables) that components, themes, and product surfaces consume to stay visually consistent, accessible, and themeable.
+
+Every value you use in a Primer-based interface — a background color, a border radius, a font size, an animation duration — originates here.
+
+## Token architecture
+
+Tokens are organized in two layers. Each layer has a specific responsibility, and they must only be consumed in the direction shown below.
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                    BASE TOKENS                          │
+│  Raw scale values — never used directly in components   │
+│  e.g. base.color.blue.5 → #0969da                       │
+└──────────────────────┬──────────────────────────────────┘
+                       │ referenced by
+┌──────────────────────▼──────────────────────────────────┐
+│                 FUNCTIONAL TOKENS                       │
+│  Semantic meaning — safe to use in components & CSS     │
+│  e.g. --bgColor-accent-emphasis, --borderRadius-medium  │
+│       --text-body-shorthand-medium, --shadow-resting-sm │
+└─────────────────────────────────────────────────────────┘
+```
+
+**Base tokens** define the raw scale (neutral grays, blue palette steps, spacing scale in px, etc.). They live in `src/tokens/base/` and are compiled but never meant to be referenced directly in product code.
+
+**Functional tokens** carry semantic meaning. They map base values to named roles like "accent background" or "danger foreground". These are the tokens you write in CSS and in component code.
+
+<Warning>
+Never reference base tokens directly in product code. Always use functional tokens. Base values change between themes; functional tokens are stable.
+</Warning>
+
+## Token categories
+
+<CardGroup cols={2}>
+  <Card title="Color" icon="palette">
+    Background (`--bgColor-*`), foreground (`--fgColor-*`), and border (`--borderColor-*`) tokens with semantic variants: default, muted, emphasis, accent, success, attention, severe, danger, done, and more. Nine themes ship out of the box.
+  </Card>
+  <Card title="Typography" icon="font">
+    Shorthand font tokens (`--text-{role}-shorthand-{size}`) cover display, title, body, subtitle, caption, codeBlock, and codeInline roles. Each shorthand sets `font-size`, `line-height`, and `font-weight` together.
+  </Card>
+  <Card title="Spacing & size" icon="ruler">
+    Base size scale, control padding tokens (`--control-{size}-paddingBlock`), and stack gap tokens (`--stack-gap-{size}`) for consistent layout density across condensed, normal, and spacious modes.
+  </Card>
+  <Card title="Motion" icon="timer">
+    Duration and easing tokens (`--duration-*`, `--easing-*`) that keep animations under 300ms for UI interactions. Required for animated components like `Spinner`.
+  </Card>
+  <Card title="Shadows" icon="layers">
+    Resting and floating shadow tokens (`--shadow-resting-*`, `--shadow-floating-*`) paired with z-index tokens (`--zIndex-*`) for consistent depth hierarchy across cards, menus, modals, and tooltips.
+  </Card>
+  <Card title="Borders" icon="square">
+    Border width (`--borderWidth-*`) and border radius (`--borderRadius-*`) tokens that scale consistently from `xsmall` through `xlarge`, plus `full` for circular elements.
+  </Card>
+</CardGroup>
+
+## Color token naming convention
+
+Color tokens follow a predictable three-part pattern:
+
+```
+--{category}-{semantic}-{variant}
+    │            │          │
+    │            │          └── muted | emphasis | (omit for default)
+    │            └───────────── accent | success | attention | danger | ...
+    └────────────────────────── bgColor | fgColor | borderColor
+```
+
+**Examples from the source:**
+
+| CSS variable | Role |
+|---|---|
+| `--bgColor-default` | Primary page and content background |
+| `--bgColor-muted` | Secondary areas, code block backgrounds, sidebars |
+| `--bgColor-accent-emphasis` | Active states, selected elements — pair with `--fgColor-onEmphasis` |
+| `--bgColor-danger-muted` | Error state backgrounds |
+| `--fgColor-default` | Primary text |
+| `--fgColor-onEmphasis` | Text on any `*-emphasis` background |
+| `--borderRadius-medium` | Standard rounded corners |
+
+## Theme support
+
+The package ships nine color themes as CSS files, applied via the `data-color-mode` and `data-light-theme`/`data-dark-theme` attributes on the `<html>` element.
+
+| Theme file | Description |
+|---|---|
+| `light.css` | Default light mode |
+| `light-high-contrast.css` | Light mode, increased contrast |
+| `light-colorblind.css` | Light mode, protanopia/deuteranopia safe |
+| `light-tritanopia.css` | Light mode, tritanopia safe |
+| `dark.css` | Default dark mode |
+| `dark-dimmed.css` | Soft dark mode |
+| `dark-high-contrast.css` | Dark mode, increased contrast |
+| `dark-colorblind.css` | Dark mode, protanopia/deuteranopia safe |
+| `dark-tritanopia.css` | Dark mode, tritanopia safe |
+
+## Build pipeline
+
+Token source files are written in [JSON5](https://json5.org/) in `src/tokens/` and compiled with [Style Dictionary](https://styledictionary.com) into the `dist/` directory. The build produces CSS custom property files, Figma token exports, and LLM-readable metadata.
+
+<Note>
+Motion CSS imports are required for components with animations, such as `Spinner` from `@primer/react`. If animated components appear static, check that you have imported the motion CSS file.
+</Note>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Quick start" icon="rocket" href="/quickstart">
+    Install the package and use your first tokens in under 5 minutes.
+  </Card>
+  <Card title="Installation" icon="package" href="/installation">
+    Full setup guide including all CSS import paths and framework-specific configuration.
+  </Card>
+</CardGroup>

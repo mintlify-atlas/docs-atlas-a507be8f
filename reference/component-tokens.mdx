@@ -1,0 +1,190 @@
+---
+title: "Component Token Reference"
+description: "Complete reference for Primer component-scoped tokens. These tokens are namespaced to specific components and reference functional tokens."
+---
+
+Component tokens are CSS custom properties scoped to a specific UI component. They sit at the top of Primer's three-layer token hierarchy, consuming functional tokens (like `--bgColor-*` and `--fgColor-*`) and adapting to all themes automatically.
+
+<Note>
+Component tokens are intended for use **inside the component they belong to**. Do not use `--button-*` tokens to style arbitrary elements — use functional tokens instead.
+</Note>
+
+---
+
+## How component tokens work
+
+Component tokens reference functional tokens rather than raw values:
+
+```css
+/* Component token references a functional token */
+--button-default-bgColor-rest: var(--control-bgColor-rest);
+
+/* Functional token resolves to the correct value per theme */
+--control-bgColor-rest: #f6f8fa; /* light mode */
+--control-bgColor-rest: #21262d; /* dark mode */
+```
+
+This means you get automatic theme support without writing any theme overrides yourself.
+
+---
+
+## Available component token files
+
+Each file below corresponds to a component namespace in the token system.
+
+| Component | Namespace | File |
+|---|---|---|
+| Avatar | `--avatar-*` | `avatar.json5` |
+| Avatar stack | `--avatarStack-*` | `avatarStack.json5` |
+| Button | `--button-*` | `button.json5` |
+| Card | `--card-*` | `card.json5` |
+| CodeMirror editor | `--codeMirror-*` | `codeMirror.json5` |
+| Contribution graph | `--contribution-*` | `contribution.json5` |
+| Counter | `--counter-*` | `counter.json5` |
+| Dashboard | `--dashboard-*` | `dashboard.json5` |
+| Diff blob | `--diffBlob-*` | `diffBlob.json5` |
+| Header | `--header-*` | `header.json5` |
+| Header search | `--headerSearch-*` | `headerSerach.json5` |
+| Highlight | `--highlight-*` | `highlight.json5` |
+| Label | `--label-*` | `label.json5` |
+| Menu | `--menu-*` | `menu.json5` |
+| Overlay | `--overlay-*` | `overlay.json5` |
+| Page | `--page-*` | `page.json5` |
+| Progress bar | `--progressBar-*` | `progressBar.json5` |
+| Reaction button | `--reactionButton-*` | `reactionButton.json5` |
+| Select menu | `--selectMenu-*` | `selectMenu.json5` |
+| Side nav | `--sideNav-*` | `sideNav.json5` |
+| Skeleton loader | `--skeletonLoader-*` | `skeletonLoader.json5` |
+| Timeline badge | `--timelineBadge-*` | `timelineBadge.json5` |
+| Tooltip | `--tooltip-*` | `tooltip.json5` |
+| Topic tag | `--topicTag-*` | `topicTag.json5` |
+| Tree view | `--treeView-*` | `treeView.json5` |
+| Underline nav | `--underlineNav-*` | `underlineNav.json5` |
+
+---
+
+## Button tokens
+
+The button component has four variants: `default`, `primary`, `invisible`, `outline`, and `danger`. Each variant exposes color tokens for foreground, background, border, and shadow across all interactive states.
+
+### button.default — standard button
+
+| Token | Type | State | Description |
+|---|---|---|---|
+| `--button-default-fgColor-rest` | color | rest | Label color at rest |
+| `--button-default-fgColor-disabled` | color | disabled | Label color when disabled |
+| `--button-default-bgColor-rest` | color | rest | Background at rest |
+| `--button-default-bgColor-hover` | color | hover | Background on hover |
+| `--button-default-bgColor-active` | color | active | Background while pressed |
+| `--button-default-bgColor-selected` | color | selected | Background when selected |
+| `--button-default-bgColor-disabled` | color | disabled | Background when disabled |
+| `--button-default-borderColor-rest` | color | rest | Border at rest |
+| `--button-default-borderColor-hover` | color | hover | Border on hover |
+| `--button-default-borderColor-active` | color | active | Border while pressed |
+| `--button-default-borderColor-disabled` | color | disabled | Border when disabled |
+| `--button-default-shadow-resting` | shadow | rest | Drop shadow at rest |
+
+### button.primary — primary call-to-action
+
+| Token | Type | State | Description |
+|---|---|---|---|
+| `--button-primary-fgColor-rest` | color | rest | Label color at rest (white) |
+| `--button-primary-fgColor-disabled` | color | disabled | Label color when disabled |
+| `--button-primary-iconColor-rest` | color | rest | Icon color at rest |
+| `--button-primary-iconColor-disabled` | color | disabled | Icon color when disabled |
+| `--button-primary-bgColor-rest` | color | rest | Background at rest (success emphasis) |
+| `--button-primary-bgColor-hover` | color | hover | Background on hover |
+| `--button-primary-bgColor-active` | color | active | Background while pressed |
+| `--button-primary-bgColor-disabled` | color | disabled | Background when disabled |
+| `--button-primary-borderColor-rest` | color | rest | Border at rest |
+| `--button-primary-borderColor-hover` | color | hover | Border on hover |
+| `--button-primary-borderColor-active` | color | active | Border while pressed |
+| `--button-primary-borderColor-disabled` | color | disabled | Border when disabled |
+| `--button-primary-shadow-selected` | shadow | selected | Inset shadow for selected state |
+
+### button.invisible — ghost/link button
+
+| Token | Type | State | Description |
+|---|---|---|---|
+| `--button-invisible-fgColor-rest` | color | rest | Label color at rest |
+| `--button-invisible-fgColor-hover` | color | hover | Label color on hover |
+| `--button-invisible-fgColor-active` | color | active | Label color while pressed |
+| `--button-invisible-fgColor-disabled` | color | disabled | Label color when disabled |
+| `--button-invisible-iconColor-rest` | color | rest | Icon color at rest (muted) |
+| `--button-invisible-iconColor-hover` | color | hover | Icon color on hover |
+| `--button-invisible-iconColor-disabled` | color | disabled | Icon color when disabled |
+| `--button-invisible-bgColor-rest` | color | rest | Transparent background at rest |
+| `--button-invisible-bgColor-hover` | color | hover | Subtle background on hover |
+| `--button-invisible-bgColor-active` | color | active | Subtle background while pressed |
+| `--button-invisible-bgColor-disabled` | color | disabled | Background when disabled |
+| `--button-invisible-borderColor-rest` | color | rest | Transparent border at rest |
+| `--button-invisible-borderColor-hover` | color | hover | Border on hover |
+| `--button-invisible-borderColor-disabled` | color | disabled | Border when disabled |
+
+### button.outline — outlined accent button
+
+| Token | Type | State | Description |
+|---|---|---|---|
+| `--button-outline-fgColor-rest` | color | rest | Accent-colored label at rest |
+| `--button-outline-fgColor-hover` | color | hover | White label on hover (filled state) |
+| `--button-outline-fgColor-active` | color | active | Label while pressed |
+| `--button-outline-fgColor-disabled` | color | disabled | Muted label when disabled |
+| `--button-outline-bgColor-rest` | color | rest | Background at rest |
+| `--button-outline-bgColor-hover` | color | hover | Accent background on hover |
+| `--button-outline-bgColor-active` | color | active | Background while pressed |
+| `--button-outline-bgColor-disabled` | color | disabled | Background when disabled |
+| `--button-outline-borderColor-hover` | color | hover | Border on hover |
+| `--button-outline-borderColor-active` | color | active | Border while pressed |
+| `--button-outline-shadow-selected` | shadow | selected | Inset shadow for selected state |
+
+### button.danger — destructive action button
+
+| Token | Type | State | Description |
+|---|---|---|---|
+| `--button-danger-fgColor-rest` | color | rest | Danger-colored label at rest |
+| `--button-danger-fgColor-hover` | color | hover | White label on hover |
+| `--button-danger-fgColor-active` | color | active | Label while pressed |
+| `--button-danger-fgColor-disabled` | color | disabled | Muted label when disabled |
+| `--button-danger-iconColor-rest` | color | rest | Icon color at rest |
+| `--button-danger-iconColor-hover` | color | hover | Icon color on hover |
+| `--button-danger-iconColor-disabled` | color | disabled | Icon color when disabled |
+| `--button-danger-bgColor-rest` | color | rest | Background at rest |
+| `--button-danger-bgColor-hover` | color | hover | Danger background on hover |
+| `--button-danger-bgColor-active` | color | active | Darker danger background while pressed |
+| `--button-danger-bgColor-disabled` | color | disabled | Background when disabled |
+| `--button-danger-borderColor-rest` | color | rest | Border at rest |
+| `--button-danger-borderColor-hover` | color | hover | Border on hover |
+| `--button-danger-borderColor-active` | color | active | Border while pressed |
+| `--button-danger-borderColor-disabled` | color | disabled | Border when disabled |
+| `--button-danger-shadow-selected` | shadow | selected | Inset shadow for selected state |
+
+---
+
+## Overlay tokens
+
+Overlay tokens apply to modal dialogs, popovers, and drawer panels.
+
+| Token | Type | Description |
+|---|---|---|
+| `--overlay-bgColor` | color | Background color of the overlay surface |
+| `--overlay-borderColor` | color | Border color of the overlay; semi-transparent by default |
+| `--overlay-backdrop-bgColor` | color | Background color of the backdrop scrim behind the overlay |
+
+```css
+.dialog {
+  background-color: var(--overlay-bgColor);
+  border: var(--borderWidth-thin) solid var(--overlay-borderColor);
+}
+
+.backdrop {
+  background-color: var(--overlay-backdrop-bgColor);
+}
+```
+
+---
+
+## Related
+
+- [Color token reference](/reference/color-tokens) — functional tokens that component tokens reference
+- [Size token reference](/reference/size-tokens) — sizing tokens for overlay dimensions
+- [Color tokens overview](/tokens/color) — the three-layer system explained

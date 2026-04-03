@@ -1,0 +1,129 @@
+---
+title: "Theming Overview"
+description: "How Primer Primitives themes work as CSS custom property sets and how to apply them using data-color-mode, data-light-theme, and data-dark-theme attributes."
+---
+
+Primer Primitives delivers design tokens as CSS custom properties. Themes are collections of those variables scoped to specific HTML attribute selectors. Switching a theme is as simple as changing an attribute value on a container element — no JavaScript bundle swap required.
+
+## How themes work
+
+Each theme is a self-contained CSS file that defines all functional color tokens under a compound attribute selector. The selector is built from `data-color-mode` (the polarity: `light` or `dark`) and `data-light-theme` / `data-dark-theme` (which specific theme to apply).
+
+```css
+/* light.css scopes its tokens to: */
+[data-color-mode="light"][data-light-theme="light"],
+[data-color-mode="auto"][data-light-theme="light"] {
+  --bgColor-default: #ffffff;
+  --fgColor-default: #1f2328;
+  /* ...all other tokens */
+}
+```
+
+Because tokens are CSS custom properties, they cascade naturally. Child elements inherit resolved values, and you can nest theme scopes to override individual sections of a page.
+
+<Note>
+Theme attribute values use **underscores**, not dashes. For example, `data-light-theme="light_high_contrast"` — not `data-light-theme="light-high-contrast"`.
+</Note>
+
+## Available themes
+
+Primer Primitives ships nine themes organized into three groups.
+
+### Base color modes
+
+| Theme | CSS filename | `data-light-theme` / `data-dark-theme` value |
+|-------|-------------|------|
+| Light | `light.css` | `light` |
+| Dark | `dark.css` | `dark` |
+| Dark dimmed | `dark-dimmed.css` | `dark_dimmed` |
+
+### High-contrast modes
+
+| Theme | CSS filename | Attribute value |
+|-------|-------------|------|
+| Light high-contrast | `light-high-contrast.css` | `light_high_contrast` |
+| Dark high-contrast | `dark-high-contrast.css` | `dark_high_contrast` |
+
+### Colorblind-friendly modes
+
+| Theme | CSS filename | Attribute value |
+|-------|-------------|------|
+| Light colorblind | `light-colorblind.css` | `light_colorblind` |
+| Dark colorblind | `dark-colorblind.css` | `dark_colorblind` |
+| Light tritanopia | `light-tritanopia.css` | `light_tritanopia` |
+| Dark tritanopia | `dark-tritanopia.css` | `dark_tritanopia` |
+
+## Applying a theme
+
+Set `data-color-mode` and the appropriate `data-light-theme` or `data-dark-theme` attribute on the root element. Theme names in attribute values use underscores.
+
+```html
+<!-- Light mode -->
+<html data-color-mode="light" data-light-theme="light">
+
+<!-- Dark mode -->
+<html data-color-mode="dark" data-dark-theme="dark">
+
+<!-- Dark dimmed -->
+<html data-color-mode="dark" data-dark-theme="dark_dimmed">
+
+<!-- Light high-contrast -->
+<html data-color-mode="light" data-light-theme="light_high_contrast">
+
+<!-- Auto — follows OS preference -->
+<html data-color-mode="auto" data-light-theme="light" data-dark-theme="dark">
+```
+
+<Warning>
+`data-color-mode` must match the polarity of the theme (`light` or `dark`). Setting `data-color-mode="light"` with a dark theme produces undefined behavior. Use `data-color-mode="auto"` to follow the OS preference with separate light and dark theme selections.
+</Warning>
+
+## CSS imports
+
+Import only the theme files your application needs. Each file is independent.
+
+```css
+/* Base color modes */
+@import '@primer/primitives/dist/css/functional/themes/light.css';
+@import '@primer/primitives/dist/css/functional/themes/dark.css';
+@import '@primer/primitives/dist/css/functional/themes/dark-dimmed.css';
+
+/* High-contrast modes */
+@import '@primer/primitives/dist/css/functional/themes/light-high-contrast.css';
+@import '@primer/primitives/dist/css/functional/themes/dark-high-contrast.css';
+
+/* Colorblind modes */
+@import '@primer/primitives/dist/css/functional/themes/light-colorblind.css';
+@import '@primer/primitives/dist/css/functional/themes/dark-colorblind.css';
+@import '@primer/primitives/dist/css/functional/themes/light-tritanopia.css';
+@import '@primer/primitives/dist/css/functional/themes/dark-tritanopia.css';
+```
+
+## How the override system works
+
+Primer Primitives uses a layered override architecture to keep theme files compact. Variant themes only define the tokens that differ from the base mode.
+
+<Steps>
+  <Step title="Base mode defines all tokens">
+    `light.json5` and `dark.json5` define the full set of functional color tokens, referencing base palette values such as `{base.color.neutral.0}`.
+  </Step>
+  <Step title="Override files layer on top">
+    Files like `light.high-contrast.json5` and `dark.dimmed.json5` define only the tokens whose values must change. They are merged on top of the base mode during the build.
+  </Step>
+  <Step title="Build produces a complete CSS file">
+    Style Dictionary resolves all references and outputs a single self-contained CSS file per theme. You import that file — no runtime merging required.
+  </Step>
+</Steps>
+
+This means `light-high-contrast` shares the same blue palette as `light` for tokens that do not need adjustment, and only overrides neutrals and semantic colors where contrast must be increased.
+
+## Explore further
+
+<CardGroup cols={2}>
+  <Card title="Color modes" icon="sun-moon" href="/theming/color-modes">
+    Light, dark, and dark-dimmed modes with CSS imports, data attribute patterns, and system preference detection.
+  </Card>
+  <Card title="Accessibility modes" icon="universal-access" href="/theming/accessibility-modes">
+    High-contrast, colorblind, and tritanopia modes with usage recommendations and CSS imports.
+  </Card>
+</CardGroup>

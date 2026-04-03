@@ -1,0 +1,291 @@
+---
+title: "Using CSS variables"
+description: "How to reference Primer design tokens as CSS custom properties, with rules for color pairings, interactive states, typography, z-index, and motion."
+---
+
+Primer tokens are distributed as CSS custom properties. Once you have imported the theme files, every token is available as a `var(--token-name)` call anywhere in your CSS.
+
+## Importing the tokens
+
+<CodeGroup>
+
+```css All themes
+/* Size and typography (not theme-dependent) */
+@import '@primer/primitives/dist/css/base/size/size.css';
+@import '@primer/primitives/dist/css/base/typography/typography.css';
+@import '@primer/primitives/dist/css/functional/typography/typography.css';
+@import '@primer/primitives/dist/css/functional/size/border.css';
+@import '@primer/primitives/dist/css/functional/size/size.css';
+
+/* Motion (required for animated components) */
+@import '@primer/primitives/dist/css/base/motion/motion.css';
+
+/* Color themes — import the ones you need */
+@import '@primer/primitives/dist/css/functional/themes/light.css';
+@import '@primer/primitives/dist/css/functional/themes/dark.css';
+@import '@primer/primitives/dist/css/functional/themes/dark-dimmed.css';
+@import '@primer/primitives/dist/css/functional/themes/light-high-contrast.css';
+@import '@primer/primitives/dist/css/functional/themes/dark-high-contrast.css';
+@import '@primer/primitives/dist/css/functional/themes/light-colorblind.css';
+@import '@primer/primitives/dist/css/functional/themes/dark-colorblind.css';
+@import '@primer/primitives/dist/css/functional/themes/light-tritanopia.css';
+@import '@primer/primitives/dist/css/functional/themes/dark-tritanopia.css';
+```
+
+```bash Install
+npm install --save @primer/primitives
+```
+
+</CodeGroup>
+
+<Warning>
+Never reference base tokens (e.g. `{base.color.blue.5}`) in product code. Always use functional tokens. Base values change between themes; functional tokens remain stable across all nine themes.
+</Warning>
+
+## Using a token
+
+Reference any token with standard CSS `var()` syntax:
+
+```css example.css
+.card {
+  background-color: var(--bgColor-default);
+  color: var(--fgColor-default);
+  border: var(--borderWidth-thin) solid var(--borderColor-default);
+  border-radius: var(--borderRadius-medium);
+  padding: var(--control-medium-paddingBlock) var(--control-medium-paddingInline-normal);
+}
+```
+
+---
+
+## Color pairing rules
+
+Foreground and background tokens must be used together. Mixing tokens from incompatible pairings fails WCAG contrast requirements.
+
+| Background token | Foreground token | Rule |
+|---|---|---|
+| `--bgColor-*-emphasis` | `--fgColor-onEmphasis` | Must pair — emphasis backgrounds require `onEmphasis` text |
+| `--bgColor-*-muted` | `--fgColor-{semantic}` | Must use matching semantic foreground |
+| `--bgColor-default` | `--fgColor-default` | Standard pairing |
+| `--bgColor-muted` | `--fgColor-default` | Never use `--fgColor-muted` on `--bgColor-muted` |
+
+**Contrast requirements:**
+
+| Context | Minimum ratio | Standard |
+|---|---|---|
+| Normal text | 4.5:1 | WCAG AA |
+| Large text / UI components | 3:1 | WCAG AA |
+
+<Note>
+Run `npm run validate:contrast` to check all token pairings in your branch against WCAG AA requirements.
+</Note>
+
+---
+
+## Interactive states checklist
+
+All interactive elements must define all five states. Missing any state is a visual or accessibility defect.
+
+| State | Selector | Notes |
+|---|---|---|
+| Rest | `.element` | Required |
+| Hover | `:hover` | Required |
+| Focus | `:focus-visible` | Required — never use `:focus` alone |
+| Active | `:active` | Required |
+| Disabled | `:disabled` / `[aria-disabled="true"]` | Required |
+
+### Full button example
+
+The following example shows all five states with correct token usage:
+
+```css button.css
+/* Button: all 5 interactive states with correct token usage */
+.btn {
+  /* Base styles */
+  background-color: var(--control-bgColor-rest);
+  color: var(--fgColor-default);
+  border: none;
+  border-radius: var(--borderRadius-medium);
+  padding-block: var(--control-medium-paddingBlock);
+  padding-inline: var(--control-medium-paddingInline-normal);
+  font: var(--text-body-shorthand-medium);
+  cursor: pointer;
+
+  /* Motion: must be <300ms */
+  transition:
+    background-color 150ms ease,
+    box-shadow 150ms ease,
+    transform 100ms ease;
+}
+
+/* State: hover */
+.btn:hover {
+  background-color: var(--control-bgColor-hover);
+}
+
+/* State: focus-visible (must use :focus-visible, not :focus) */
+.btn:focus-visible {
+  outline: var(--focus-outline);
+  outline-offset: var(--outline-focus-offset);
+}
+
+/* State: active/pressed */
+.btn:active {
+  background-color: var(--control-bgColor-active);
+  transform: scale(0.98);
+}
+
+/* State: disabled */
+.btn:disabled {
+  background-color: var(--bgColor-disabled);
+  color: var(--fgColor-disabled);
+  cursor: not-allowed;
+  opacity: 1; /* never use opacity for disabled */
+}
+
+/* Accessibility: must respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .btn {
+    transition: none;
+  }
+}
+```
+
+---
+
+## Typography shorthand rules
+
+<AccordionGroup>
+  <Accordion title="Always use shorthand tokens">
+    Use `--text-{role}-shorthand-{size}` tokens with the CSS `font` shorthand property. This ensures `font-size`, `line-height`, and `font-weight` are always synchronized.
+
+    ```css typography.css
+    /* Correct — shorthand keeps all three properties in sync */
+    .heading { font: var(--text-title-shorthand-large); }
+    .body    { font: var(--text-body-shorthand-medium); }
+    .caption { font: var(--text-caption-shorthand-small); }
+
+    /* Wrong — never set font-size alone when a shorthand exists */
+    .heading { font-size: var(--text-title-size-large); }
+    ```
+  </Accordion>
+  <Accordion title="Available roles and sizes">
+    ```
+    --text-[role]-shorthand-[size]
+      ├── role: display | title | body | subtitle | caption | codeBlock | codeInline
+      └── size: small | medium | large
+    ```
+
+    Match the role to its semantic purpose: use `title` tokens for headings, `body` for prose, `caption` for auxiliary labels. Do not use a large `body` token as a substitute for `title`.
+  </Accordion>
+  <Accordion title="Code blocks vs inline code">
+    Use `--text-codeBlock-shorthand-*` for multi-line code blocks and `--text-codeInline-shorthand-*` for inline `<code>` spans. Never swap them — they have different line-height values optimized for their context.
+  </Accordion>
+  <Accordion title="Mobile sizing">
+    Downgrade one size level for mobile viewports:
+
+    ```css responsive.css
+    .page-title {
+      font: var(--text-title-shorthand-large);
+    }
+
+    @media (max-width: 768px) {
+      .page-title {
+        font: var(--text-title-shorthand-medium);
+      }
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Z-index and shadow alignment
+
+Z-index tokens and shadow tokens must be paired. Using a floating shadow with a default z-index causes visual inconsistencies.
+
+| Shadow level | Z-index token | Example usage |
+|---|---|---|
+| `--shadow-resting-*` | `--zIndex-default` / `--zIndex-sticky` | Cards, sticky headers |
+| `--shadow-floating-small`, `--shadow-floating-medium` | `--zIndex-dropdown` / `--zIndex-overlay` | Menus, drawers |
+| `--shadow-floating-large`, `--shadow-floating-xlarge` | `--zIndex-modal` / `--zIndex-popover` | Dialogs, tooltips |
+
+**Available z-index layers:**
+
+```
+--zIndex-[layer]
+  └── layer: behind | default | sticky | dropdown | overlay | modal | popover | skipLink
+```
+
+<Warning>
+Never use `--zIndex-behind` (-1) without verifying that no ancestor element creates a stacking context via `transform`, `opacity`, `filter`, or similar. Never use arbitrary numeric z-index values outside the token scale.
+</Warning>
+
+```css layering.css
+.sticky-header {
+  position: sticky;
+  top: 0;
+  z-index: var(--zIndex-sticky);
+  box-shadow: var(--shadow-resting-medium);
+}
+
+.dropdown-menu {
+  position: absolute;
+  z-index: var(--zIndex-dropdown);
+  box-shadow: var(--shadow-floating-medium);
+}
+
+.modal-overlay {
+  position: fixed;
+  z-index: var(--zIndex-modal);
+  box-shadow: var(--shadow-floating-large);
+}
+```
+
+---
+
+## Motion and `prefers-reduced-motion`
+
+Every transition or animation must:
+
+- Stay at or below 300ms for UI interactions
+- Use tokens from `--duration-*` and `--easing-*`
+- Include a `prefers-reduced-motion: reduce` block that removes or minimizes motion
+
+<Tabs>
+  <Tab title="Correct pattern">
+    ```css motion.css
+    .element {
+      transition: background-color 150ms ease, transform 100ms ease;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .element {
+        transition: none;
+      }
+    }
+    ```
+  </Tab>
+  <Tab title="Easing selection guide">
+    | Situation | Easing |
+    |---|---|
+    | Element entering or exiting viewport | `ease-out` (default) |
+    | Element moving or morphing on screen | `ease-in-out` |
+    | Hover state change | `ease` |
+    | Constant motion (loaders, spinners) | `linear` |
+  </Tab>
+</Tabs>
+
+**Motion rules summary:**
+
+| Rule | Requirement |
+|---|---|
+| Use motion for interactive state changes (hover, focus, press) | Must |
+| Keep animations ≤ 300ms for UI interactions | Must |
+| Respect `prefers-reduced-motion` | Must |
+| Provide instant alternatives when motion is reduced | Must |
+| Micro-interactions | Should be 100–200ms |
+| State changes | Should be 200–300ms |
+| Exceed 500ms for any UI interaction | Never |
+| Use motion purely for decoration | Never |
+| Create indefinitely looping motion without user control | Never |

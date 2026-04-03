@@ -1,0 +1,228 @@
+---
+title: "Accessibility Modes"
+description: "High-contrast, colorblind-friendly, and tritanopia theme variants for users who need adjusted color rendering."
+---
+
+Primer Primitives provides dedicated accessibility theme variants on top of the base light and dark color modes. These themes adjust specific token values to meet the needs of users with low vision, color vision deficiency, or other visual requirements.
+
+<Note>
+All base themes in Primer Primitives already meet WCAG AA contrast requirements. The accessibility modes go further — high-contrast themes target WCAG AAA ratios, and colorblind/tritanopia themes remove reliance on hues that are difficult to distinguish.
+</Note>
+
+<Note>
+Theme attribute values use underscores. For example, `data-light-theme="light_high_contrast"` — not `"light-high-contrast"`.
+</Note>
+
+## High-contrast modes
+
+High-contrast themes increase foreground-to-background contrast ratios beyond the base themes. They are built by layering `light.high-contrast.json5` or `dark.high-contrast.json5` overrides on top of the corresponding base mode.
+
+### Light high-contrast
+
+<CodeGroup>
+
+```css CSS import
+@import '@primer/primitives/dist/css/functional/themes/light-high-contrast.css';
+```
+
+```html HTML attribute
+<html data-color-mode="light" data-light-theme="light_high_contrast">
+```
+
+</CodeGroup>
+
+### Dark high-contrast
+
+<CodeGroup>
+
+```css CSS import
+@import '@primer/primitives/dist/css/functional/themes/dark-high-contrast.css';
+```
+
+```html HTML attribute
+<html data-color-mode="dark" data-dark-theme="dark_high_contrast">
+```
+
+</CodeGroup>
+
+### When to offer high-contrast modes
+
+Offer high-contrast themes to users who have low vision, reduced contrast sensitivity, or who use OS high-contrast settings. Detect the OS preference with the `prefers-contrast` media query:
+
+```javascript
+const prefersHighContrast = window.matchMedia('(prefers-contrast: more)').matches;
+
+if (prefersHighContrast) {
+  const el = document.documentElement;
+  const currentMode = el.getAttribute('data-color-mode') ?? 'light';
+  if (currentMode === 'dark') {
+    el.setAttribute('data-dark-theme', 'dark_high_contrast');
+  } else {
+    el.setAttribute('data-color-mode', 'light');
+    el.setAttribute('data-light-theme', 'light_high_contrast');
+  }
+}
+```
+
+## Colorblind modes (protanopia and deuteranopia)
+
+The colorblind themes are designed for users with protanopia (no red cone) or deuteranopia (no green cone). These conditions make it difficult to distinguish red from green.
+
+The internal theme identifier is `light-protanopia-deuteranopia` / `dark-protanopia-deuteranopia`, but the CSS filenames use the shorter `light-colorblind` / `dark-colorblind` convention.
+
+### Light colorblind
+
+<CodeGroup>
+
+```css CSS import
+@import '@primer/primitives/dist/css/functional/themes/light-colorblind.css';
+```
+
+```html HTML attribute
+<html data-color-mode="light" data-light-theme="light_colorblind">
+```
+
+</CodeGroup>
+
+### Dark colorblind
+
+<CodeGroup>
+
+```css CSS import
+@import '@primer/primitives/dist/css/functional/themes/dark-colorblind.css';
+```
+
+```html HTML attribute
+<html data-color-mode="dark" data-dark-theme="dark_colorblind">
+```
+
+</CodeGroup>
+
+## Tritanopia modes
+
+Tritanopia is a form of color vision deficiency where the blue cone is absent, making it difficult to distinguish blue from yellow. The tritanopia themes adjust token values that would otherwise rely on these hues.
+
+### Light tritanopia
+
+<CodeGroup>
+
+```css CSS import
+@import '@primer/primitives/dist/css/functional/themes/light-tritanopia.css';
+```
+
+```html HTML attribute
+<html data-color-mode="light" data-light-theme="light_tritanopia">
+```
+
+</CodeGroup>
+
+### Dark tritanopia
+
+<CodeGroup>
+
+```css CSS import
+@import '@primer/primitives/dist/css/functional/themes/dark-tritanopia.css';
+```
+
+```html HTML attribute
+<html data-color-mode="dark" data-dark-theme="dark_tritanopia">
+```
+
+</CodeGroup>
+
+## Offering accessibility modes to users
+
+The recommended approach is to expose a theme preference setting in your application rather than relying solely on OS-level signals.
+
+<Steps>
+  <Step title="Import all required theme CSS files">
+    Import every theme CSS file you plan to offer. Load these once in your global stylesheet.
+
+    ```css
+    /* Base modes */
+    @import '@primer/primitives/dist/css/functional/themes/light.css';
+    @import '@primer/primitives/dist/css/functional/themes/dark.css';
+
+    /* High-contrast variants */
+    @import '@primer/primitives/dist/css/functional/themes/light-high-contrast.css';
+    @import '@primer/primitives/dist/css/functional/themes/dark-high-contrast.css';
+
+    /* Colorblind variants */
+    @import '@primer/primitives/dist/css/functional/themes/light-colorblind.css';
+    @import '@primer/primitives/dist/css/functional/themes/dark-colorblind.css';
+
+    /* Tritanopia variants */
+    @import '@primer/primitives/dist/css/functional/themes/light-tritanopia.css';
+    @import '@primer/primitives/dist/css/functional/themes/dark-tritanopia.css';
+    ```
+  </Step>
+  <Step title="Build a theme map">
+    Map each user-facing option to its `data-color-mode` and theme attribute values. Note the underscores in attribute values.
+
+    ```javascript
+    const themeMap = {
+      'light':               { colorMode: 'light', attr: 'data-light-theme', value: 'light' },
+      'dark':                { colorMode: 'dark',  attr: 'data-dark-theme',  value: 'dark' },
+      'light-high-contrast': { colorMode: 'light', attr: 'data-light-theme', value: 'light_high_contrast' },
+      'dark-high-contrast':  { colorMode: 'dark',  attr: 'data-dark-theme',  value: 'dark_high_contrast' },
+      'light-colorblind':    { colorMode: 'light', attr: 'data-light-theme', value: 'light_colorblind' },
+      'dark-colorblind':     { colorMode: 'dark',  attr: 'data-dark-theme',  value: 'dark_colorblind' },
+      'light-tritanopia':    { colorMode: 'light', attr: 'data-light-theme', value: 'light_tritanopia' },
+      'dark-tritanopia':     { colorMode: 'dark',  attr: 'data-dark-theme',  value: 'dark_tritanopia' },
+    };
+
+    function applyTheme(key) {
+      const entry = themeMap[key] ?? themeMap['light'];
+      const el = document.documentElement;
+      el.setAttribute('data-color-mode', entry.colorMode);
+      el.setAttribute(entry.attr, entry.value);
+      localStorage.setItem('primer-theme', key);
+    }
+
+    const saved = localStorage.getItem('primer-theme');
+    if (saved && themeMap[saved]) {
+      applyTheme(saved);
+    }
+    ```
+  </Step>
+  <Step title="Expose the preference in your UI">
+    Provide a settings control listing all available themes.
+
+    ```html
+    <select id="theme-select" aria-label="Color theme">
+      <optgroup label="Light">
+        <option value="light">Light</option>
+        <option value="light-high-contrast">Light high-contrast</option>
+        <option value="light-colorblind">Light colorblind</option>
+        <option value="light-tritanopia">Light tritanopia</option>
+      </optgroup>
+      <optgroup label="Dark">
+        <option value="dark">Dark</option>
+        <option value="dark-high-contrast">Dark high-contrast</option>
+        <option value="dark-colorblind">Dark colorblind</option>
+        <option value="dark-tritanopia">Dark tritanopia</option>
+      </optgroup>
+    </select>
+    <script>
+      document.getElementById('theme-select').addEventListener('change', (e) => {
+        applyTheme(e.target.value);
+      });
+    </script>
+    ```
+  </Step>
+</Steps>
+
+<Warning>
+Do not use accessibility modes as the only way to meet contrast requirements. The base `light` and `dark` themes already meet WCAG AA. Accessibility themes are supplementary options — do not hide them behind feature flags.
+</Warning>
+
+## Summary of all accessibility themes
+
+| Theme | CSS file | `data-*-theme` value | Condition addressed |
+|-------|----------|-----------|---------------------|
+| Light high-contrast | `light-high-contrast.css` | `light_high_contrast` | Low vision, high contrast preference |
+| Dark high-contrast | `dark-high-contrast.css` | `dark_high_contrast` | Low vision, high contrast preference |
+| Light colorblind | `light-colorblind.css` | `light_colorblind` | Protanopia, deuteranopia |
+| Dark colorblind | `dark-colorblind.css` | `dark_colorblind` | Protanopia, deuteranopia |
+| Light tritanopia | `light-tritanopia.css` | `light_tritanopia` | Tritanopia |
+| Dark tritanopia | `dark-tritanopia.css` | `dark_tritanopia` | Tritanopia |

@@ -1,80 +1,185 @@
 ---
-title: "Quickstart"
-description: "Start building awesome documentation in minutes"
+title: "Quick start"
+description: "Get from zero to using Primer Primitives tokens in your project in under 5 minutes."
 ---
 
-## Get started in three steps
+<Steps>
+  <Step title="Install the package">
+    Add `@primer/primitives` to your project with your preferred package manager.
 
-Get your documentation site running locally and make your first customization.
+    <CodeGroup>
 
-### Step 1: Set up your local environment
+    ```bash npm
+    npm install --save @primer/primitives
+    ```
 
-<AccordionGroup>
-  <Accordion icon="copy" title="Clone your docs locally">
-    During the onboarding process, you created a GitHub repository with your docs content if you didn't already have one. You can find a link to this repository in your [dashboard](https://dashboard.mintlify.com).
-    
-    To clone the repository locally so that you can make and preview changes to your docs, follow the [Cloning a repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) guide in the GitHub docs.
-  </Accordion>
-  <Accordion icon="rectangle-terminal" title="Start the preview server">
-    1. Install the Mintlify CLI: `npm i -g mint`
-    2. Navigate to your docs directory and run: `mint dev`
-    3. Open `http://localhost:3000` to see your docs live!
-    
-    <Tip>Your preview updates automatically as you edit files.</Tip>
-  </Accordion>
-</AccordionGroup>
+    ```bash yarn
+    yarn add @primer/primitives
+    ```
 
-### Step 2: Deploy your changes
+    ```bash pnpm
+    pnpm add @primer/primitives
+    ```
 
-<AccordionGroup>
-  <Accordion icon="github" title="Install our GitHub app">
-    Install the Mintlify GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app).
-    
-    Our GitHub app automatically deploys your changes to your docs site, so you don't need to manage deployments yourself.
-</Accordion>
-<Accordion icon="palette" title="Update your site name and colors">
-    For a first change, let's update the name and colors of your docs site.
+    </CodeGroup>
+  </Step>
 
-    1. Open `docs.json` in your editor.
-    2. Change the `"name"` field to your project name.
-    3. Update the `"colors"` to match your brand.
-    4. Save and see your changes instantly at `http://localhost:3000`.
+  <Step title="Import the CSS files">
+    Import the CSS files that match your needs. At minimum you need a color theme and the size/typography base files.
 
-    <Tip>Try changing the primary color to see an immediate difference!</Tip>
-  </Accordion>
-</AccordionGroup>
+    ```css your-styles.css
+    /* Base size and typography scale */
+    @import '@primer/primitives/dist/css/base/size/size.css';
+    @import '@primer/primitives/dist/css/base/typography/typography.css';
 
-### Step 3: Go live
+    /* Functional size tokens (borders, breakpoints, spacing) */
+    @import '@primer/primitives/dist/css/functional/size/border.css';
+    @import '@primer/primitives/dist/css/functional/size/size.css';
+    @import '@primer/primitives/dist/css/functional/typography/typography.css';
 
-<Accordion icon="rocket" title="Publish your docs">
-  1. Commit and push your changes.
-  2. Your docs will update and be live in moments!
-</Accordion>
+    /* Motion tokens (required for animated components) */
+    @import '@primer/primitives/dist/css/base/motion/motion.css';
+
+    /* Color theme — choose the ones your app supports */
+    @import '@primer/primitives/dist/css/functional/themes/light.css';
+    @import '@primer/primitives/dist/css/functional/themes/dark.css';
+    ```
+
+    <Note>
+    If you are building for GitHub's full theme range, see the [Installation](/installation) page for the complete list of theme imports.
+    </Note>
+  </Step>
+
+  <Step title="Apply a theme to your HTML">
+    Color tokens are scoped to a `data-color-mode` attribute. Add it to your root element so the CSS variables resolve correctly.
+
+    ```html index.html
+    <!DOCTYPE html>
+    <html data-color-mode="auto"
+          data-light-theme="light"
+          data-dark-theme="dark">
+      <head>
+        <link rel="stylesheet" href="your-styles.css" />
+      </head>
+      <body>
+        <!-- your content -->
+      </body>
+    </html>
+    ```
+
+    Set `data-color-mode` to `"light"`, `"dark"`, or `"auto"` (follows the OS preference).
+  </Step>
+
+  <Step title="Use tokens in your CSS">
+    Reference tokens as CSS custom properties using `var()`. Always use functional tokens — never base tokens.
+
+    ```css button.css
+    .btn-primary {
+      /* Color */
+      background-color: var(--bgColor-accent-emphasis);
+      color: var(--fgColor-onEmphasis);
+      border: 1px solid transparent;
+
+      /* Spacing */
+      padding-block: var(--control-medium-paddingBlock);
+      padding-inline: var(--control-medium-paddingInline-normal);
+
+      /* Shape */
+      border-radius: var(--borderRadius-medium);
+
+      /* Typography */
+      font: var(--text-body-shorthand-medium);
+
+      cursor: pointer;
+
+      /* Motion: keep under 300ms */
+      transition: background-color 150ms ease, box-shadow 150ms ease;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--bgColor-accent-emphasis);
+      box-shadow: var(--shadow-resting-small);
+    }
+
+    /* Use :focus-visible, never :focus alone */
+    .btn-primary:focus-visible {
+      outline: var(--focus-outline);
+      outline-offset: var(--outline-focus-offset);
+    }
+
+    .btn-primary:disabled {
+      background-color: var(--bgColor-disabled);
+      color: var(--fgColor-disabled);
+      cursor: not-allowed;
+    }
+
+    /* Always respect reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      .btn-primary {
+        transition: none;
+      }
+    }
+    ```
+  </Step>
+
+  <Step title="Style a complete element">
+    Here is a self-contained card component using only Primer Primitives tokens.
+
+    ```html card-example.html
+    <div class="primer-card">
+      <h2 class="primer-card__title">Card title</h2>
+      <p class="primer-card__body">Supporting content goes here.</p>
+    </div>
+    ```
+
+    ```css card-example.css
+    .primer-card {
+      background-color: var(--bgColor-default);
+      border: 1px solid var(--borderColor-default);
+      border-radius: var(--borderRadius-medium);
+      padding: var(--stack-padding-normal);
+      box-shadow: var(--shadow-resting-small);
+    }
+
+    .primer-card__title {
+      color: var(--fgColor-default);
+      font: var(--text-title-shorthand-medium);
+      margin: 0 0 var(--stack-gap-condensed);
+    }
+
+    .primer-card__body {
+      color: var(--fgColor-muted);
+      font: var(--text-body-shorthand-medium);
+      margin: 0;
+    }
+    ```
+  </Step>
+</Steps>
+
+## Key token pairs to know
+
+The most common token combinations follow a strict pairing rule: emphasis backgrounds always pair with `--fgColor-onEmphasis` for text.
+
+| Background | Foreground | Use case |
+|---|---|---|
+| `--bgColor-default` | `--fgColor-default` | Standard page content |
+| `--bgColor-muted` | `--fgColor-default` | Secondary areas, sidebars |
+| `--bgColor-accent-emphasis` | `--fgColor-onEmphasis` | Primary actions, selected state |
+| `--bgColor-danger-emphasis` | `--fgColor-onEmphasis` | Destructive actions (delete) |
+| `--bgColor-success-emphasis` | `--fgColor-onEmphasis` | Positive actions (merge) |
+| `--bgColor-disabled` | `--fgColor-disabled` | Disabled interactive elements |
+
+<Warning>
+Never pair `--fgColor-muted` with `--bgColor-muted`. Use `--fgColor-default` on muted backgrounds to maintain a minimum 4.5:1 contrast ratio (WCAG AA).
+</Warning>
 
 ## Next steps
 
-Now that you have your docs running, explore these key features:
-
 <CardGroup cols={2}>
-
-<Card title="Write Content" icon="pen-to-square" href="/essentials/markdown">
-  Learn MDX syntax and start writing your documentation.
-</Card>
-
-<Card title="Customize style" icon="palette" href="/essentials/settings">
-  Make your docs match your brand perfectly.
-</Card>
-
-<Card title="Add code examples" icon="square-code" href="/essentials/code">
-  Include syntax-highlighted code blocks.
-</Card>
-
-<Card title="API documentation" icon="code" href="/api-reference/introduction">
-  Auto-generate API docs from OpenAPI specs.
-</Card>
-
+  <Card title="Installation" icon="package" href="/installation">
+    Full setup guide with all CSS imports and framework-specific configuration for React, Next.js, and more.
+  </Card>
+  <Card title="Introduction" icon="book" href="/introduction">
+    Learn the token architecture — base vs. functional layers — and all token categories in depth.
+  </Card>
 </CardGroup>
-
-<Note>
-  **Need help?** See our [full documentation](https://mintlify.com/docs) or join our [community](https://mintlify.com/community).
-</Note>

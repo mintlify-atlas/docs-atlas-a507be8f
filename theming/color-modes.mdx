@@ -1,0 +1,227 @@
+---
+title: "Color Modes"
+description: "Apply light, dark, and dark-dimmed themes using CSS imports and data attributes, with JavaScript theme switching and system preference detection."
+---
+
+Primer Primitives ships three standard color modes: **light**, **dark**, and **dark-dimmed**. Each mode is a separate CSS file that scopes all functional color tokens to a compound `data-color-mode` + `data-light-theme` / `data-dark-theme` attribute selector on the container element.
+
+<Note>
+Theme attribute values use underscores. For example, `data-dark-theme="dark_dimmed"` — not `dark-dimmed`.
+</Note>
+
+## Light mode
+
+Light mode uses a white-based background palette with dark foreground text. It is the default experience and the base from which all light-variant themes (high-contrast, colorblind) are derived.
+
+<CodeGroup>
+
+```css CSS import
+@import '@primer/primitives/dist/css/functional/themes/light.css';
+```
+
+```html HTML attribute
+<html data-color-mode="light" data-light-theme="light">
+```
+
+</CodeGroup>
+
+## Dark mode
+
+Dark mode uses a near-black background palette with light foreground text. It is the base for all dark-variant themes.
+
+<CodeGroup>
+
+```css CSS import
+@import '@primer/primitives/dist/css/functional/themes/dark.css';
+```
+
+```html HTML attribute
+<html data-color-mode="dark" data-dark-theme="dark">
+```
+
+</CodeGroup>
+
+## Dark dimmed mode
+
+Dark dimmed is a softer alternative to dark mode. It uses a warmer, slightly lighter background that reduces eye strain for users who find pure dark mode too stark.
+
+<CodeGroup>
+
+```css CSS import
+@import '@primer/primitives/dist/css/functional/themes/dark-dimmed.css';
+```
+
+```html HTML attribute
+<html data-color-mode="dark" data-dark-theme="dark_dimmed">
+```
+
+</CodeGroup>
+
+## Comparing all three modes
+
+<Tabs>
+  <Tab title="Light">
+    ```html
+    <!DOCTYPE html>
+    <html data-color-mode="light" data-light-theme="light">
+      <head>
+        <style>
+          @import '@primer/primitives/dist/css/functional/themes/light.css';
+          body {
+            background-color: var(--bgColor-default);
+            color: var(--fgColor-default);
+          }
+        </style>
+      </head>
+      <body>
+        <p>This page uses the light theme.</p>
+      </body>
+    </html>
+    ```
+  </Tab>
+  <Tab title="Dark">
+    ```html
+    <!DOCTYPE html>
+    <html data-color-mode="dark" data-dark-theme="dark">
+      <head>
+        <style>
+          @import '@primer/primitives/dist/css/functional/themes/dark.css';
+          body {
+            background-color: var(--bgColor-default);
+            color: var(--fgColor-default);
+          }
+        </style>
+      </head>
+      <body>
+        <p>This page uses the dark theme.</p>
+      </body>
+    </html>
+    ```
+  </Tab>
+  <Tab title="Dark dimmed">
+    ```html
+    <!DOCTYPE html>
+    <html data-color-mode="dark" data-dark-theme="dark_dimmed">
+      <head>
+        <style>
+          @import '@primer/primitives/dist/css/functional/themes/dark-dimmed.css';
+          body {
+            background-color: var(--bgColor-default);
+            color: var(--fgColor-default);
+          }
+        </style>
+      </head>
+      <body>
+        <p>This page uses the dark-dimmed theme.</p>
+      </body>
+    </html>
+    ```
+  </Tab>
+</Tabs>
+
+## Switching themes with JavaScript
+
+Update the data attributes at runtime to change the active theme without a page reload. Import all color mode CSS files upfront so the browser has each theme available.
+
+```css
+/* Import all three color modes */
+@import '@primer/primitives/dist/css/functional/themes/light.css';
+@import '@primer/primitives/dist/css/functional/themes/dark.css';
+@import '@primer/primitives/dist/css/functional/themes/dark-dimmed.css';
+```
+
+```javascript
+const themes = {
+  light:        { colorMode: 'light', attr: 'data-light-theme', value: 'light' },
+  dark:         { colorMode: 'dark',  attr: 'data-dark-theme',  value: 'dark' },
+  'dark-dimmed':{ colorMode: 'dark',  attr: 'data-dark-theme',  value: 'dark_dimmed' },
+};
+
+function setTheme(key) {
+  const entry = themes[key];
+  if (!entry) return;
+  const el = document.documentElement;
+  el.setAttribute('data-color-mode', entry.colorMode);
+  el.setAttribute(entry.attr, entry.value);
+  localStorage.setItem('primer-theme', key);
+}
+
+// Wire up a theme picker
+document.getElementById('theme-select').addEventListener('change', (event) => {
+  setTheme(event.target.value);
+});
+
+// Restore saved preference on load
+const saved = localStorage.getItem('primer-theme');
+if (saved && themes[saved]) {
+  setTheme(saved);
+}
+```
+
+```html
+<select id="theme-select">
+  <option value="light">Light</option>
+  <option value="dark">Dark</option>
+  <option value="dark-dimmed">Dark dimmed</option>
+</select>
+```
+
+<Tip>
+Apply theme attributes server-side or in a blocking inline script before the first paint to avoid a flash of unstyled content.
+</Tip>
+
+## System preference with prefers-color-scheme
+
+Use `data-color-mode="auto"` combined with both `data-light-theme` and `data-dark-theme` to automatically follow the OS preference:
+
+```html
+<html
+  data-color-mode="auto"
+  data-light-theme="light"
+  data-dark-theme="dark">
+```
+
+Or detect and apply programmatically:
+
+```javascript
+function applySystemTheme() {
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const el = document.documentElement;
+  if (prefersDark) {
+    el.setAttribute('data-color-mode', 'dark');
+    el.setAttribute('data-dark-theme', 'dark');
+  } else {
+    el.setAttribute('data-color-mode', 'light');
+    el.setAttribute('data-light-theme', 'light');
+  }
+}
+
+applySystemTheme();
+
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+  const explicit = localStorage.getItem('primer-theme');
+  if (!explicit) applySystemTheme();
+});
+```
+
+## Scoping a theme to a region
+
+You can apply a theme to any element, not just `<html>`. This lets you render a section in a different color mode than the surrounding page.
+
+```html
+<html data-color-mode="light" data-light-theme="light">
+  <body>
+    <!-- Main content uses the light theme -->
+    <main>...</main>
+
+    <!-- This sidebar is always dark regardless of the page theme -->
+    <aside data-color-mode="dark" data-dark-theme="dark">
+      ...
+    </aside>
+  </body>
+</html>
+```
+
+<Note>
+Nested theme scopes override the parent cascade for all tokens defined inside that scope. Make sure you import the CSS for every theme you use, including scoped ones.
+</Note>

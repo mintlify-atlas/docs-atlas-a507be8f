@@ -1,0 +1,184 @@
+---
+title: "Token Format"
+description: "Reference for the JSON5 token file format used in Primer Primitives, including all fields, types, and extension properties."
+---
+
+Primer Primitives tokens are defined in [JSON5](https://json5.org/) files inside `src/tokens/`. The format follows the [W3C Design Token Community Group (DTCG)](https://design-tokens.github.io/community-group/format/) specification, with Primer-specific extensions.
+
+## Basic structure
+
+Every token is an object with `$value` and `$type` as required fields:
+
+```json5 src/tokens/functional/color/bgColor.json5
+{
+  bgColor: {
+    default: {
+      $value: '{base.color.neutral.0}',
+      $type: 'color',
+      $description: 'Default background color for pages and main content areas',
+    },
+  },
+}
+```
+
+The nested key path becomes the CSS custom property name. `bgColor.default` compiles to `--bgColor-default`.
+
+## Required fields
+
+<ParamField path="$value" type="string | object" required>
+  The token's value. Use curly brace syntax to reference another token: `'{base.color.blue.5}'`. Use a literal value for raw values: `'16px'`, `'#ffffff'`.
+</ParamField>
+
+<ParamField path="$type" type="string" required>
+  The token type. Determines how the value is transformed during the build.
+</ParamField>
+
+## Supported `$type` values
+
+| Type | Description | Example value |
+|------|-------------|---------------|
+| `color` | RGB/hex color | `'{base.color.blue.5}'` |
+| `dimension` | Size with unit | `'16px'` |
+| `shadow` | Box shadow | `{offsetX: '0', offsetY: '1px', blur: '2px', color: '...'}` |
+| `duration` | Animation timing | `'150ms'` |
+| `cubicBezier` | Easing curve | `[0.33, 1, 0.68, 1]` |
+| `typography` | Font shorthand | `{fontSize: '...', lineHeight: '...', fontWeight: '...'}` |
+| `border` | Border shorthand | `{color: '...', width: '1px', style: 'solid'}` |
+| `fontFamily` | Font stack | `'MonaLisa, monospace'` |
+| `fontWeight` | Numeric weight | `400` |
+| `gradient` | CSS gradient | `{...}` |
+
+## Optional fields
+
+<ParamField path="$description" type="string">
+  Human-readable explanation of when and how to use the token. Add this for all non-obvious tokens.
+</ParamField>
+
+<ParamField path="$extensions" type="object">
+  Primer-specific metadata. Contains sub-keys for Figma export, theme overrides, and LLM guidelines.
+</ParamField>
+
+## Extensions
+
+### `org.primer.overrides` — theme-specific values
+
+Override a token's value for specific themes without creating a separate token file:
+
+```json5
+{
+  bgColor: {
+    default: {
+      $value: '{base.color.neutral.0}',
+      $type: 'color',
+      $extensions: {
+        'org.primer.overrides': {
+          dark: '{base.color.neutral.1}',
+          'dark-dimmed': '{base.color.neutral.3}',
+          'dark-high-contrast': '{base.color.neutral.0}',
+        },
+      },
+    },
+  },
+}
+```
+
+The keys match theme names from `scripts/themes.config.ts` (e.g. `dark`, `dark-dimmed`, `light-high-contrast`).
+
+### `org.primer.figma` — Figma variable export
+
+Controls how the token is exported to Figma variables:
+
+```json5
+'org.primer.figma': {
+  collection: 'mode',       // Figma collection name
+  mode: 'light',            // Figma mode within the collection
+  scopes: ['bgColor'],      // Figma variable scopes
+  group: 'semantic',        // Optional grouping label
+  codeSyntax: {
+    web: 'var(--bgColor-default)',
+  },
+}
+```
+
+| Field | Description |
+|-------|-------------|
+| `collection` | Figma collection: `'mode'` or `'pattern/mode'` |
+| `mode` | The Figma mode (e.g. `'light'`, `'dark'`) |
+| `scopes` | Figma variable scopes array (e.g. `['bgColor', 'borderColor']`) |
+| `group` | Optional label for grouping in Figma |
+| `codeSyntax.web` | CSS snippet shown in Figma's code panel |
+
+### `org.primer.llm` — LLM guidelines
+
+Adds the token to the auto-generated `DESIGN_TOKENS_SPEC.md` for use with AI coding tools:
+
+```json5
+'org.primer.llm': {
+  usage: ['page-background', 'card-background'],  // Max 3 use cases
+  rules: 'Use as the primary background. Do NOT use for emphasis.',
+}
+```
+
+| Field | Description |
+|-------|-------------|
+| `usage` | Array of 1–3 concrete use cases (short strings) |
+| `rules` | MUST/SHOULD/NEVER guidance for AI assistants |
+
+## Color-specific: `alpha` property
+
+Add an `alpha` property alongside `$value` to override the opacity of a referenced color. The original alpha value is always replaced:
+
+```json5
+{
+  muted: {
+    $value: '{base.color.blue.3}',
+    $type: 'color',
+    alpha: 0.4,  // results in 40% opacity regardless of source alpha
+  },
+}
+```
+
+## The `@`-hack for default values
+
+When a token needs both a default value and sub-values (e.g. `bgColor.accent` and `bgColor.accent.muted`), use `@` as the default key. It is removed from the compiled output:
+
+```json5
+{
+  bgColor: {
+    accent: {
+      '@': {
+        $value: '{base.color.blue.5}',
+        $type: 'color',
+        $description: 'Default accent background (bgColor-accent)',
+      },
+      muted: {
+        $value: '{base.color.blue.2}',
+        $type: 'color',
+        $description: 'Muted accent background (bgColor-accent-muted)',
+      },
+    },
+  },
+}
+```
+
+This compiles to `--bgColor-accent` and `--bgColor-accent-muted`.
+
+## Naming rules
+
+- Token keys must be **camelCase** or **kebab-case**
+- Only letters, numbers, and `-` are allowed
+- Names are validated by `npm run lint:tokens`
+
+<Warning>
+  Do not use underscores, dots, or special characters in token key names. The linter will reject them.
+</Warning>
+
+## Token reference syntax
+
+Reference other tokens using curly brace syntax:
+
+```json5
+$value: '{base.color.blue.5}'
+```
+
+The path maps to the nested key structure in token source files. References are resolved at build time — if a referenced token doesn't exist, the build throws an error.

@@ -1,0 +1,109 @@
+{
+  "projectType": "sdk-library",
+  "projectName": "Primer Primitives",
+  "projectDescription": "Design tokens for color, typography, spacing, motion, and theming in GitHub's Primer design system, compiled with Style Dictionary into CSS variables and JSON.",
+  "theme": "willow",
+  "primaryColor": "#8448e7",
+  "lightColor": "#c4a2f4",
+  "darkColor": null,
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "introduction",
+              "quickstart",
+              "installation"
+            ]
+          },
+          {
+            "group": "Token Categories",
+            "pages": [
+              "tokens/color",
+              "tokens/typography",
+              "tokens/spacing",
+              "tokens/motion",
+              "tokens/border-shadow"
+            ]
+          },
+          {
+            "group": "Theming",
+            "pages": [
+              "theming/overview",
+              "theming/color-modes",
+              "theming/accessibility-modes"
+            ]
+          },
+          {
+            "group": "Guides",
+            "pages": [
+              "guides/using-css-variables",
+              "guides/figma-integration",
+              "guides/contributing-tokens"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Reference",
+        "groups": [
+          {
+            "group": "Token Reference",
+            "pages": [
+              "reference/color-tokens",
+              "reference/typography-tokens",
+              "reference/size-tokens",
+              "reference/motion-tokens",
+              "reference/component-tokens"
+            ]
+          },
+          {
+            "group": "Build System",
+            "pages": [
+              "reference/build-system",
+              "reference/output-formats",
+              "reference/token-format"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "Design tokens for color, typography, spacing, motion, and shadows",
+    "Multiple color themes including light, dark, high-contrast, and colorblind modes",
+    "Style Dictionary-based build pipeline producing CSS variables, JSON, and Figma exports",
+    "Component-level tokens for GitHub's Primer UI components",
+    "WCAG accessibility compliance with contrast ratio enforcement",
+    "Alpha/mix color transformations and theme override system",
+    "LLM-friendly token metadata via DESIGN_TOKENS_SPEC.md"
+  ],
+  "publicApiSurface": [
+    "@import '@primer/primitives/dist/css/functional/themes/light.css'",
+    "@import '@primer/primitives/dist/css/functional/themes/dark.css'",
+    "@import '@primer/primitives/dist/css/base/size/size.css'",
+    "@import '@primer/primitives/dist/css/base/typography/typography.css'",
+    "@import '@primer/primitives/dist/css/functional/size/border.css'",
+    "@import '@primer/primitives/dist/css/functional/size/breakpoints.css'",
+    "@import '@primer/primitives/dist/css/functional/size/size.css'",
+    "@import '@primer/primitives/dist/css/base/motion/motion.css'",
+    "--bgColor-default",
+    "--bgColor-muted",
+    "--bgColor-accent-emphasis",
+    "--fgColor-default",
+    "--fgColor-muted",
+    "--fgColor-onEmphasis",
+    "--borderColor-default",
+    "--borderColor-accent-emphasis",
+    "--text-body-shorthand-medium",
+    "--text-title-shorthand-large",
+    "--control-medium-paddingBlock",
+    "--control-medium-paddingInline-normal",
+    "--stack-gap-normal",
+    "--zIndex-modal",
+    "--shadow-floating-large"
+  ]
+}

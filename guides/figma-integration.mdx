@@ -1,0 +1,168 @@
+---
+title: "Figma integration"
+description: "How Primer design tokens are exported to Figma variables, including collection mapping, mode assignment, and scope configuration."
+---
+
+The build pipeline includes a dedicated Figma export step that converts token source files into Figma-compatible variable definitions. You do not need any third-party plugins or manual steps — the export is generated automatically when you run the build.
+
+## How the export works
+
+<Steps>
+  <Step title="Author tokens with Figma metadata">
+    Each token in `src/tokens/` can include an `org.primer.figma` extension block that tells the build system how to represent that token in Figma. Without this block, the token is compiled to CSS but not exported to Figma.
+  </Step>
+  <Step title="Run the Figma build">
+    Run `npm run build:figma` to produce the Figma-specific output files. These are placed in `dist/` alongside the CSS outputs.
+  </Step>
+  <Step title="Import into Figma">
+    Import the generated output into Figma using the Primer Figma tooling. The tokens appear as Figma variables, organized by collection and mode exactly as specified in the metadata.
+  </Step>
+</Steps>
+
+---
+
+## The `org.primer.figma` extension fields
+
+Every token's Figma export behavior is controlled by fields inside `$extensions['org.primer.figma']`.
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `collection` | string | Yes | The Figma variable collection this token belongs to (e.g. `"mode"`, `"pattern/mode"`) |
+| `mode` | string | No | The mode within the collection (e.g. `"light"`, `"dark"`) |
+| `scopes` | string[] | No | The Figma variable scopes assigned to this token (e.g. `["bgColor"]`, `["bgColor", "borderColor"]`) |
+| `group` | string | No | Organizational group within the collection (e.g. `"semantic"`) |
+| `codeSyntax` | object | No | Maps platform names to suggested code strings shown in Figma's inspect panel |
+
+---
+
+## Real token example
+
+The following is taken directly from `src/tokens/functional/color/bgColor.json5`:
+
+```json5 bgColor.json5
+{
+  bgColor: {
+    default: {
+      $value: '{base.color.neutral.0}',
+      $type: 'color',
+      $description: 'Default background color for pages and main content areas',
+      $extensions: {
+        'org.primer.figma': {
+          collection: 'mode',
+          scopes: ['bgColor', 'borderColor'],
+          group: 'semantic',
+          codeSyntax: {
+            web: 'var(--bgColor-default) /* utility class: .color-bg-default */',
+          },
+        },
+        'org.primer.overrides': {
+          dark: '{base.color.neutral.1}',
+          'dark-dimmed': '{base.color.neutral.3}',
+          'dark-high-contrast': '{base.color.neutral.0}',
+        },
+      },
+    },
+  },
+}
+```
+
+In Figma, this token appears in the **`mode`** collection under the **`semantic`** group. It carries two scopes — `bgColor` and `borderColor` — so it is offered as a suggestion whenever a designer picks a variable for either of those properties. The `codeSyntax.web` value surfaces in the inspect panel, linking designers directly to the CSS variable name and its utility class alias.
+
+---
+
+## What collections map to in Figma
+
+Collections group tokens by their update frequency and theming relationship.
+
+| Collection value | What it contains | When it changes |
+|---|---|---|
+| `mode` | All functional tokens that vary by color mode (light/dark/high-contrast) | When the user switches color mode |
+| `pattern/mode` | Tokens that carry both a pattern-level meaning and a mode dimension | When pattern or mode changes |
+
+<Note>
+The `mode` collection is the most common. Most semantic tokens in `bgColor`, `fgColor`, and `borderColor` belong to it.
+</Note>
+
+---
+
+## Scopes
+
+Scopes control where a variable appears in Figma's variable picker. When a designer applies a fill or a stroke, Figma filters the variable list to only show variables whose scopes match the property being set.
+
+The scope strings in `org.primer.figma` are resolved to the actual Figma-compatible scope identifiers by the `figmaAttributes` transformer at build time (`src/transformers/figmaAttributes.ts`).
+
+Common scope values used in Primer:
+
+| Scope string | Where it appears in Figma |
+|---|---|
+| `bgColor` | Fill color pickers |
+| `borderColor` | Stroke/border color pickers |
+| `fgColor` | Text color pickers |
+
+A token can declare multiple scopes:
+
+```json5 multi-scope.json5
+{
+  bgColor: {
+    muted: {
+      $value: '{base.color.neutral.1}',
+      $type: 'color',
+      $extensions: {
+        'org.primer.figma': {
+          collection: 'mode',
+          scopes: ['bgColor', 'borderColor'], // appears in both fill and stroke pickers
+          group: 'semantic',
+        },
+      },
+    },
+  },
+}
+```
+
+---
+
+## Running the Figma build
+
+```bash build-commands.bash
+# Figma output only
+npm run build:figma
+
+# All outputs (CSS, JSON, Figma, LLM docs)
+npm run build
+```
+
+<Note>
+The Figma build is included in the standard full build (`npm run build`). You only need `npm run build:figma` when iterating on Figma-specific metadata and want a faster feedback loop.
+</Note>
+
+---
+
+## Adding Figma metadata to a new token
+
+When authoring a new functional token, include `org.primer.figma` if the token should appear as a Figma variable:
+
+<Steps>
+  <Step title="Choose a collection">
+    For tokens that change with light/dark mode, use `"mode"`. Check existing tokens in the same category to confirm the right collection.
+  </Step>
+  <Step title="Assign scopes">
+    Add the scopes that match the token's purpose. A `bgColor` token gets `["bgColor"]`. A border token that also works as a background gets `["bgColor", "borderColor"]`.
+  </Step>
+  <Step title="Add code syntax (optional)">
+    If the token has a CSS utility class alias, add it to `codeSyntax.web` so it surfaces in Figma's inspect panel.
+
+    ```json5 example-token.json5
+    'org.primer.figma': {
+      collection: 'mode',
+      scopes: ['bgColor'],
+      group: 'semantic',
+      codeSyntax: {
+        web: 'var(--bgColor-accent-muted) /* utility class: .color-bg-accent */',
+      },
+    },
+    ```
+  </Step>
+  <Step title="Build and verify">
+    Run `npm run build:figma` and inspect the output to confirm your token appears with the correct collection, mode, and scopes.
+  </Step>
+</Steps>

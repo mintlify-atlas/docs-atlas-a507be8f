@@ -1,0 +1,220 @@
+---
+title: "Build System"
+description: "Reference for the Primer Primitives build pipeline: commands, architecture, key files, and how to extend or modify build outputs."
+---
+
+Primer Primitives uses [Style Dictionary](https://styledictionary.com/) with custom extensions to transform token source files into CSS, JSON, and other output formats. The main build orchestrator lives in `scripts/buildTokens.ts`.
+
+## Build commands
+
+<CodeGroup>
+
+```bash Full build
+npm run build
+```
+
+```bash Tokens only (CSS, JSON, docs)
+npm run build:tokens
+```
+
+```bash Fallback theme files
+npm run build:fallbacks
+```
+
+```bash Figma-specific outputs
+npm run build:figma
+```
+
+```bash TypeScript definitions
+npm run build:config
+```
+
+```bash LLM guidelines (DESIGN_TOKENS_SPEC.md)
+npm run build:llm
+```
+
+</CodeGroup>
+
+The full `npm run build` runs `clean` followed by all sub-commands in sequence: `build:tokens` → `build:fallbacks` → `build:figma` → `build:config` → `build:llm`.
+
+### Other useful commands
+
+| Command | Description |
+|---|---|
+| `npm run lint:fix` | Auto-fix ESLint issues across the codebase |
+| `npm run format:fix` | Auto-fix Prettier formatting |
+| `npm run validate:contrast` | Check color contrast ratios for accessibility |
+| `npm run lint:tokens` | Validate token JSON5 files against schemas |
+
+<Note>
+After any change to token files, run `npm run lint && npm run format:fix && npm run test && npm run build` to validate the full pipeline.
+</Note>
+
+---
+
+## Build architecture
+
+The build pipeline is composed of several extension points registered on the `PrimerStyleDictionary` instance in `src/primerStyleDictionary.ts`.
+
+| Directory | Purpose |
+|---|---|
+| `src/platforms/` | Output platform configs — defines what files each platform writes and which transformers/filters to apply |
+| `src/formats/` | Custom output formatters — control the file content and structure |
+| `src/transformers/` | Value transformations — convert raw token values to platform-specific formats |
+| `src/filters/` | Token filtering logic — include or exclude tokens from a given output |
+| `src/preprocessors/` | Pre-build token processing — runs before Style Dictionary resolves references |
+| `src/parsers/` | Token file parsing — handles JSON5 syntax |
+
+### Platforms
+
+The build uses four main output platforms, assembled in `getStyleDictionaryConfig`:
+
+| Platform key | Output path pattern | Description |
+|---|---|---|
+| `css` | `dist/css/` | CSS custom properties |
+| `docJson` | `dist/docs/` | JSON for documentation tooling |
+| `styleLint` | `dist/styleLint/` | JSON for Stylelint config generation |
+| `fallbacks` | `dist/fallbacks/` | JSON fallback values for theme switching |
+| `deprecated` | `dist/deprecated/` | Deprecated token values for migration |
+
+### Registered formats
+
+| Format name | Description |
+|---|---|
+| `css/advanced` | Primary CSS custom properties output |
+| `css/customMedia` | CSS custom media queries |
+| `javascript/esm` | ES module JavaScript export |
+| `javascript/commonJs` | CommonJS JavaScript export |
+| `typescript/export-definition` | TypeScript type definitions |
+| `json/nested-prefixed` | Nested JSON with name prefix |
+| `json/one-dimensional` | Flat key-value JSON |
+| `json/postCss-fallback` | PostCSS fallback JSON |
+| `json/figma` | Figma plugin JSON |
+| `json/llm-guidelines` | Markdown guidelines for LLM tools |
+
+### Registered transformers
+
+| Transformer | Description |
+|---|---|
+| `colorAlphaToCss` | Applies `alpha` property to color tokens |
+| `color/rgbAlpha` | Converts color to `rgba()` string |
+| `color/rgbaFloat` | Converts color to float RGBA components |
+| `color/hex` | Converts color to hex string |
+| `cubicBezier/css` | Converts cubic bezier to `cubic-bezier()` CSS |
+| `float/pixel` | Converts float to pixel string |
+| `float/pixelUnitless` | Converts float to unitless pixel number |
+| `dimension/rem` | Converts dimension to `rem` units |
+| `dimension/remPxArray` | Converts dimension to `[rem, px]` array |
+| `dimension/pixelUnitless` | Converts dimension to unitless pixel number |
+| `duration/css` | Converts duration to CSS `ms` string |
+| `figma/attributes` | Adds Figma scope/collection metadata |
+| `json/deprecated` | Marks tokens for the deprecated JSON output |
+| `name/pathToCamelCase` | Token name as camelCase |
+| `name/pathToPascalCase` | Token name as PascalCase |
+| `name/pathToDotNotation` | Token name as dot-separated path |
+| `name/pathToFigma` | Token name formatted for Figma |
+| `name/pathToKebabCase` | Token name as kebab-case |
+| `name/pathToSlashNotation` | Token name as slash-separated path |
+| `shadow/css` | Converts shadow token to `box-shadow` CSS |
+| `border/css` | Converts border token to CSS shorthand |
+| `typography/css` | Converts typography token to CSS shorthand |
+| `transition/css` | Converts transition token to CSS shorthand |
+| `fontWeight/number` | Converts font weight to numeric value |
+| `fontFamily/css` | Converts font family to CSS string |
+| `fontFamily/figma` | Converts font family for Figma export |
+| `gradient/css` | Converts gradient token to CSS gradient |
+
+### Preprocessors
+
+| Preprocessor | Description |
+|---|---|
+| `themeOverrides` | Expands `org.primer.overrides` into per-theme token entries |
+| `inheritGroupProperties` | Propagates `$type` and other group-level properties to child tokens |
+
+---
+
+## Key files
+
+| File | Purpose |
+|---|---|
+| `scripts/buildTokens.ts` | Main build orchestration — iterates themes, size, typography, motion, and deprecated builds |
+| `scripts/buildFallbacks.ts` | Builds fallback JSON files for theme switching without CSS cascade |
+| `scripts/buildFigma.ts` | Builds Figma plugin JSON output |
+| `scripts/buildLlm.ts` | Builds `DESIGN_TOKENS_SPEC.md` and exports `CSS_SPEC_HEADER` constant |
+| `scripts/themes.config.ts` | Defines all available themes with their source and include file globs |
+| `src/primerStyleDictionary.ts` | Registers all custom formats, transformers, and preprocessors on the Style Dictionary instance |
+| `src/schemas/` | Zod schemas for token validation — used by `lint:tokens` |
+
+---
+
+## Running partial builds
+
+You can run individual build steps to speed up iteration:
+
+<Steps>
+  <Step title="Token CSS and JSON only">
+    Run `npm run build:tokens` to regenerate `dist/css/`, `dist/docs/`, `dist/fallbacks/`, and `dist/styleLint/` without touching Figma or LLM outputs.
+  </Step>
+  <Step title="LLM spec only">
+    Run `npm run build:llm` to regenerate `DESIGN_TOKENS_SPEC.md` after editing `org.primer.llm` metadata on tokens.
+  </Step>
+  <Step title="Figma only">
+    Run `npm run build:figma` to regenerate the Figma JSON export after editing `org.primer.figma` metadata.
+  </Step>
+</Steps>
+
+<Warning>
+`DESIGN_TOKENS_SPEC.md` is a generated file. Do not edit it directly — changes will be overwritten by `npm run build:llm`.
+</Warning>
+
+---
+
+## Modifying the build
+
+### Add a new output format
+
+<Steps>
+  <Step title="Create the formatter">
+    Add a new formatter function in `src/formats/`. Export it from `src/formats/index.ts`.
+  </Step>
+  <Step title="Register the format">
+    Call `PrimerStyleDictionary.registerFormat({ name: 'your/format', format: yourFormatter })` in `src/primerStyleDictionary.ts`.
+  </Step>
+  <Step title="Add a platform config">
+    Create or update a platform config in `src/platforms/` that references your new format name.
+  </Step>
+  <Step title="Wire up the build script">
+    Add the platform to `getStyleDictionaryConfig` in `scripts/buildTokens.ts`, or create a separate build script if the output is independent.
+  </Step>
+</Steps>
+
+### Add or modify a transformer
+
+<Steps>
+  <Step title="Check existing transformers">
+    Review `src/transformers/` to see if a similar transformer already exists.
+  </Step>
+  <Step title="Create or modify">
+    Create a new transformer file or edit an existing one. Export it from `src/transformers/index.ts`.
+  </Step>
+  <Step title="Register">
+    Call `PrimerStyleDictionary.registerTransform(yourTransformer)` in `src/primerStyleDictionary.ts`.
+  </Step>
+  <Step title="Apply in platform config">
+    Add the transformer name to the `transforms` array in the relevant platform config in `src/platforms/`.
+  </Step>
+</Steps>
+
+### Filter tokens from an output
+
+<Steps>
+  <Step title="Check existing filters">
+    Review `src/filters/` to find an applicable filter.
+  </Step>
+  <Step title="Create or modify">
+    Create a new filter or update an existing one. A filter is a function that receives a token and returns `true` to include it.
+  </Step>
+  <Step title="Apply">
+    Set `files[].filter` in the relevant platform config to the filter name.
+  </Step>
+</Steps>

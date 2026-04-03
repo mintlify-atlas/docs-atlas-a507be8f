@@ -1,0 +1,194 @@
+---
+title: "Spacing Tokens"
+description: "Control size, padding, and layout gap tokens for consistent spacing across interactive elements and stack layouts."
+---
+
+Primer divides spacing tokens into two distinct categories: **control tokens** for interactive elements and **stack tokens** for layout. Using the wrong category in the wrong context leads to inconsistent density and layout bugs.
+
+## Token families
+
+| Family | Pattern | Use for |
+|---|---|---|
+| Control | `--control-[size]-[property]` | Buttons, inputs, selects, form controls |
+| Stack | `--stack-gap-[density]`, `--stack-padding-[density]` | Flex containers, list layouts, card bodies |
+| ControlStack | `--controlStack-[size]-gap-[density]` | Groups of related controls (toolbars, button groups) |
+
+---
+
+## Control tokens
+
+Control tokens encode the size and padding of interactive form elements. The pattern is:
+
+```
+--control-[size]-[property]
+  ├── size: xsmall | small | medium | large | xlarge
+  └── property: size | paddingInline-[density] | paddingBlock
+                 └── density: condensed | normal | spacious
+```
+
+### Control size scale
+
+| Size | Total height | Vertical padding (paddingBlock) | Use for |
+|---|---|---|---|
+| `xsmall` | 24px | 2px | Dense UIs, compact badges |
+| `small` | 28px | 4px | Tight toolbars, small dropdowns |
+| `medium` | 32px | 6px | Standard forms (default) |
+| `large` | 40px | 10px | Prominent CTAs |
+| `xlarge` | 48px | 14px | Hero actions, onboarding |
+
+### Horizontal padding by density
+
+| Density | xsmall | small | medium | large | xlarge |
+|---|---|---|---|---|---|
+| `condensed` | 4px | 8px | 8px | 8px | 8px |
+| `normal` | 8px | 12px | 12px | 12px | 12px |
+| `spacious` | 12px | 16px | 16px | 16px | 16px |
+
+### Touch target minimums
+
+| Pointer type | Token | Value |
+|---|---|---|
+| Fine (mouse) | `--control-minTarget-fine` | 16px |
+| Coarse (touch) | `--control-minTarget-coarse` | 44px |
+
+<Info>
+  On coarse-pointer (touch) devices, all interactive controls must meet the 44px minimum touch target. Use `--control-minTarget-coarse` as your minimum constraint.
+</Info>
+
+---
+
+## Stack tokens
+
+Stack tokens provide consistent spacing for layout containers: gaps between items and padding inside containers. Use the `condensed | normal | spacious` density scale to match the content density of each section.
+
+### Gap tokens
+
+| Token | Value | Utility class | Use for |
+|---|---|---|---|
+| `--stack-gap-condensed` | 8px | `.gap-2` | Dense lists, compact menus |
+| `--stack-gap-normal` | 16px | `.gap-3` | Standard layouts (default) |
+| `--stack-gap-spacious` | 24px | `.gap-4` | Prominent sections, marketing layouts |
+
+### Padding tokens
+
+| Token | Value | Utility class | Use for |
+|---|---|---|---|
+| `--stack-padding-condensed` | 8px | `.p-2` | Tight card bodies, compact panels |
+| `--stack-padding-normal` | 16px | `.p-3` | Standard card/container padding |
+| `--stack-padding-spacious` | 24px | `.p-4` | Spacious sections, dialogs |
+
+---
+
+## ControlStack tokens
+
+ControlStack tokens control the spacing between adjacent controls in a row or column group. They are keyed to the size of the controls they group.
+
+| Token | Value | Use for |
+|---|---|---|
+| `--controlStack-small-gap-condensed` | 8px | Tight groups of small controls |
+| `--controlStack-small-gap-auto` | 8px | Default gap for small control groups |
+| `--controlStack-small-gap-spacious` | 16px | Spaced small control groups |
+| `--controlStack-medium-gap-condensed` | 8px | Tight groups of medium controls |
+| `--controlStack-medium-gap-auto` | 8px | Default gap for medium control groups |
+| `--controlStack-medium-gap-spacious` | 12px | Spaced medium control groups |
+| `--controlStack-large-gap-condensed` | 8px | Tight groups of large controls |
+| `--controlStack-large-gap-auto` | 8px | Default gap for large control groups |
+| `--controlStack-large-gap-spacious` | 12px | Spaced large control groups |
+
+---
+
+## Usage rules
+
+| Keyword | Rule |
+|---|---|
+| **MUST** | Use control tokens for all interactive elements (buttons, inputs, selects). |
+| **MUST** | Use stack tokens for all layout spacing (gaps, container padding). |
+| **MUST** | Match padding density to the control's purpose—use `condensed` for dense UIs, `spacious` for prominent CTAs. |
+| **SHOULD** | Use `medium` as the default control size when no other size is specified. |
+
+---
+
+## Real CSS usage examples
+
+```css
+/* Standard button using medium control tokens */
+.btn {
+  height: var(--control-medium-size);
+  padding-block: var(--control-medium-paddingBlock);
+  padding-inline: var(--control-medium-paddingInline-normal);
+  background-color: var(--control-bgColor-rest);
+  color: var(--fgColor-default);
+  border-radius: var(--borderRadius-medium);
+  font: var(--text-body-shorthand-medium);
+}
+
+/* Small button in a toolbar (condensed inline padding) */
+.toolbar .btn-small {
+  height: var(--control-small-size);
+  padding-block: var(--control-small-paddingBlock);
+  padding-inline: var(--control-small-paddingInline-condensed);
+}
+
+/* Layout: list of items */
+.item-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--stack-gap-normal);
+  padding: var(--stack-padding-normal);
+}
+
+/* Dense navigation list */
+.nav-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--stack-gap-condensed);
+}
+
+/* Spacious card body */
+.card-body {
+  padding: var(--stack-padding-spacious);
+}
+
+/* Button group (medium controls, auto spacing) */
+.btn-group {
+  display: flex;
+  gap: var(--controlStack-medium-gap-auto);
+}
+```
+
+### Correct vs. incorrect
+
+<CodeGroup>
+
+```css correct.css
+/* Correct: control tokens for a button */
+.btn {
+  padding-block: var(--control-medium-paddingBlock);
+  padding-inline: var(--control-medium-paddingInline-normal);
+}
+
+/* Correct: stack tokens for layout */
+.card {
+  padding: var(--stack-padding-normal);
+  gap: var(--stack-gap-normal);
+}
+```
+
+```css incorrect.css
+/* WRONG: raw pixel values */
+.btn {
+  padding: 6px 12px;
+}
+
+/* WRONG: control tokens used for layout */
+.card {
+  padding: var(--control-medium-paddingBlock);
+}
+
+/* WRONG: stack tokens used for button padding */
+.btn {
+  padding: var(--stack-padding-condensed);
+}
+```
+
+</CodeGroup>

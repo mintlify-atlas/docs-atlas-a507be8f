@@ -1,0 +1,185 @@
+---
+title: "Typography Token Reference"
+description: "Complete reference for Primer typography tokens including text shorthand, font size, line height, font weight, and font family."
+---
+
+Typography tokens in Primer are organized into shorthand tokens (which bundle font-size, line-height, and font-weight together) and individual property tokens. Both sets are available as CSS custom properties.
+
+## CSS import
+
+To use typography tokens, import the functional CSS file:
+
+```css
+@import "@primer/primitives/dist/css/functional/typography/typography.css";
+```
+
+---
+
+## Text shorthand tokens
+
+Shorthand tokens set `font-size`, `line-height`, and `font-weight` together using the CSS `font` shorthand. They follow the pattern `--text-[role]-shorthand-[size]`.
+
+<Info>
+Shorthand tokens set multiple CSS properties at once. Use individual tokens (below) when you need to override just one property.
+</Info>
+
+### Display
+
+Large, prominent headings for hero sections and major page titles.
+
+| Token | Description |
+|---|---|
+| `--text-display-shorthand` | Display role shorthand (single size) |
+
+### Title
+
+Section and page titles at various levels of hierarchy.
+
+| Token | Description |
+|---|---|
+| `--text-title-shorthand-large` | Large title shorthand |
+| `--text-title-shorthand-medium` | Medium title shorthand |
+| `--text-title-shorthand-small` | Small title shorthand |
+
+### Subtitle
+
+Supporting text beneath titles.
+
+| Token | Description |
+|---|---|
+| `--text-subtitle-shorthand` | Subtitle role shorthand (single size) |
+
+### Body
+
+Standard body text for paragraphs and interface copy.
+
+| Token | Description |
+|---|---|
+| `--text-body-shorthand-large` | Large body text shorthand |
+| `--text-body-shorthand-medium` | Medium body text shorthand (default) |
+| `--text-body-shorthand-small` | Small body text shorthand |
+
+### Caption
+
+Small supporting text for labels, metadata, and annotations.
+
+| Token | Description |
+|---|---|
+| `--text-caption-shorthand` | Caption role shorthand (single size) |
+
+### Code block
+
+Monospaced text for fenced code blocks and code editors.
+
+| Token | Description |
+|---|---|
+| `--text-codeBlock-shorthand` | Code block role shorthand |
+
+### Inline code
+
+Monospaced text for inline `code` spans within prose.
+
+| Token | Description |
+|---|---|
+| `--text-codeInline-shorthand` | Inline code role shorthand |
+
+---
+
+## Individual property tokens
+
+Use these tokens when you need to set only one typographic property rather than all three at once.
+
+### Font size tokens
+
+Font size tokens follow the pattern `--text-[role]-fontSize-[size]`.
+
+| Token | Description |
+|---|---|
+| `--text-display-fontSize` | Font size for display role |
+| `--text-title-fontSize-large` | Font size for large titles |
+| `--text-title-fontSize-medium` | Font size for medium titles |
+| `--text-title-fontSize-small` | Font size for small titles |
+| `--text-subtitle-fontSize` | Font size for subtitles |
+| `--text-body-fontSize-large` | Font size for large body text |
+| `--text-body-fontSize-medium` | Font size for medium body text |
+| `--text-body-fontSize-small` | Font size for small body text |
+| `--text-caption-fontSize` | Font size for captions |
+| `--text-codeBlock-fontSize` | Font size for code blocks |
+| `--text-codeInline-fontSize` | Font size for inline code |
+
+### Line height tokens
+
+Line height tokens follow the pattern `--text-[role]-lineHeight-[size]`.
+
+| Token | Description |
+|---|---|
+| `--text-display-lineHeight` | Line height for display role |
+| `--text-title-lineHeight-large` | Line height for large titles |
+| `--text-title-lineHeight-medium` | Line height for medium titles |
+| `--text-title-lineHeight-small` | Line height for small titles |
+| `--text-subtitle-lineHeight` | Line height for subtitles |
+| `--text-body-lineHeight-large` | Line height for large body text |
+| `--text-body-lineHeight-medium` | Line height for medium body text |
+| `--text-body-lineHeight-small` | Line height for small body text |
+| `--text-caption-lineHeight` | Line height for captions |
+| `--text-codeBlock-lineHeight` | Line height for code blocks |
+| `--text-codeInline-lineHeight` | Line height for inline code |
+
+### Font weight tokens
+
+Font weight tokens follow the pattern `--text-[role]-fontWeight-[size]`.
+
+| Token | Description |
+|---|---|
+| `--text-display-fontWeight` | Font weight for display role |
+| `--text-title-fontWeight-large` | Font weight for large titles |
+| `--text-title-fontWeight-medium` | Font weight for medium titles |
+| `--text-title-fontWeight-small` | Font weight for small titles |
+| `--text-subtitle-fontWeight` | Font weight for subtitles |
+| `--text-body-fontWeight-large` | Font weight for large body text |
+| `--text-body-fontWeight-medium` | Font weight for medium body text |
+| `--text-body-fontWeight-small` | Font weight for small body text |
+| `--text-caption-fontWeight` | Font weight for captions |
+| `--text-codeBlock-fontWeight` | Font weight for code blocks |
+| `--text-codeInline-fontWeight` | Font weight for inline code |
+
+### Font family tokens
+
+Font family tokens define the typeface stack for each category of text.
+
+| Token | Description |
+|---|---|
+| `--fontStack-system` | System UI font stack for interface text |
+| `--fontStack-sansSerif` | Sans-serif fallback stack |
+| `--fontStack-monospace` | Monospace stack for code |
+
+---
+
+## Usage example
+
+```css
+/* Using a shorthand token */
+.heading {
+  font: var(--text-title-shorthand-large);
+}
+
+/* Using individual tokens */
+.caption {
+  font-size: var(--text-caption-fontSize);
+  line-height: var(--text-caption-lineHeight);
+  color: var(--fgColor-muted);
+}
+
+/* Code block */
+pre {
+  font: var(--text-codeBlock-shorthand);
+  font-family: var(--fontStack-monospace);
+}
+```
+
+---
+
+## Related
+
+- [Typography overview](/tokens/typography) — role definitions and usage guidelines
+- [Color tokens](/reference/color-tokens) — pairing text with the correct foreground token

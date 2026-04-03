@@ -1,97 +1,76 @@
 ---
-title: "Introduction"
-description: "Welcome to the new home for your documentation"
+title: "Primer Primitives"
+description: "Design tokens for color, typography, spacing, motion, and theming — the foundation of GitHub's Primer design system."
 ---
 
-## Setting up
+Primer Primitives is the token layer powering GitHub's Primer design system. It provides a comprehensive set of design tokens compiled by Style Dictionary into CSS custom properties, JSON, and Figma variables — covering color themes, typography scales, spacing, motion, borders, and shadows.
 
-Get your documentation site up and running in minutes.
-
-<Card
-  title="Start here"
-  icon="rocket"
-  href="/quickstart"
-  horizontal
->
-  Follow our three step quickstart guide.
-</Card>
-
-## Make it yours
-
-Design a docs site that looks great and empowers your users.
-
-<Columns cols={2}>
-  <Card
-    title="Edit locally"
-    icon="pen-to-square"
-    href="/development"
-  >
-    Edit your docs locally and preview them in real time.
+<CardGroup cols={2}>
+  <Card title="Quick Start" icon="rocket" href="/quickstart">
+    Install the package and import your first CSS tokens in minutes.
   </Card>
-  <Card
-    title="Customize your site"
-    icon="palette"
-    href="/essentials/settings"
-  >
-    Customize the design and colors of your site to match your brand.
+  <Card title="Token Categories" icon="palette" href="/tokens/color">
+    Explore color, typography, spacing, motion, and border tokens.
   </Card>
-    <Card
-    title="Set up navigation"
-    icon="map"
-    href="/essentials/navigation"
-  >
-    Organize your docs to help users find what they need and succeed with your product.
+  <Card title="Theming" icon="moon" href="/theming/overview">
+    Learn how light, dark, high-contrast, and colorblind themes work.
   </Card>
-  <Card
-    title="API documentation"
-    icon="terminal"
-    href="/api-reference/introduction"
-  >
-    Auto-generate API documentation from OpenAPI specifications.
+  <Card title="Token Reference" icon="book" href="/reference/color-tokens">
+    Full reference for every CSS variable in the system.
   </Card>
-</Columns>
+</CardGroup>
 
-## Create beautiful pages
+## Get started in three steps
 
-Everything you need to create world-class documentation.
+<Steps>
+  <Step title="Install the package">
+    Add `@primer/primitives` to your project via npm, yarn, or pnpm.
 
-<Columns cols={2}>
-  <Card
-    title="Write with MDX"
-    icon="pen-fancy"
-    href="/essentials/markdown"
-  >
-    Use MDX to style your docs pages.
-  </Card>
-  <Card
-    title="Code samples"
-    icon="code"
-    href="/essentials/code"
-  >
-    Add sample code to demonstrate how to use your product.
-  </Card>
-  <Card
-    title="Images"
-    icon="image"
-    href="/essentials/images"
-  >
-    Display images and other media.
-  </Card>
-  <Card
-    title="Reusable snippets"
-    icon="recycle"
-    href="/essentials/reusable-snippets"
-  >
-    Write once and reuse across your docs.
-  </Card>
-</Columns>
+    ```bash
+    npm install @primer/primitives
+    ```
+  </Step>
+  <Step title="Import a theme">
+    Import a color theme CSS file to set up CSS custom properties for your chosen color mode.
 
-## Need inspiration?
+    ```css
+    @import '@primer/primitives/dist/css/functional/themes/light.css';
+    @import '@primer/primitives/dist/css/base/typography/typography.css';
+    @import '@primer/primitives/dist/css/functional/size/size.css';
+    ```
+  </Step>
+  <Step title="Use CSS variables in your styles">
+    Reference tokens as CSS custom properties in your stylesheets or components.
 
-<Card
-  title="See complete examples"
-  icon="stars"
-  href="https://mintlify.com/customers"
->
-  Browse our showcase of exceptional documentation sites.
-</Card>
+    ```css
+    .card {
+      background-color: var(--bgColor-default);
+      color: var(--fgColor-default);
+      border: 1px solid var(--borderColor-default);
+      border-radius: var(--borderRadius-medium);
+      padding: var(--stack-padding-normal);
+    }
+    ```
+  </Step>
+</Steps>
+
+## Why Primer Primitives?
+
+<CardGroup cols={2}>
+  <Card title="Multi-theme support" icon="swatchbook">
+    Nine built-in themes including light, dark, dark dimmed, high-contrast variants, and colorblind-friendly modes.
+  </Card>
+  <Card title="Accessibility first" icon="universal-access">
+    All color pairings are validated against WCAG AA contrast requirements, with automated contrast checking built into CI.
+  </Card>
+  <Card title="Figma integration" icon="figma">
+    Tokens compile directly to Figma variables, keeping design and code in sync without manual handoff.
+  </Card>
+  <Card title="Style Dictionary powered" icon="gear">
+    Built on the industry-standard Style Dictionary, with custom transformers, formats, and preprocessors for Primer's needs.
+  </Card>
+</CardGroup>
+
+<Note>
+  Primer Primitives is used by GitHub's own product teams. All tokens are tested in production at scale.
+</Note>

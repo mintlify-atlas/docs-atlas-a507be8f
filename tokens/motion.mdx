@@ -1,0 +1,202 @@
+---
+title: "Motion Tokens"
+description: "Duration and easing tokens for transitions and animations, with accessibility requirements for reduced motion."
+---
+
+Motion tokens in Primer define the timing and easing curves for transitions and animations. Used correctly, they create polished, responsive interactions. Used incorrectly, they can cause accessibility harm for users with vestibular disorders.
+
+<Warning>
+  All animations MUST respect the `prefers-reduced-motion` media query. Provide instant (zero-duration) alternatives for every motion you add.
+</Warning>
+
+---
+
+## Duration tokens
+
+Duration tokens are based on a linear millisecond scale from 0ms to 1000ms.
+
+| Token | Value | Recommended use |
+|---|---|---|
+| `--base-duration-0` | 0ms | Instant state changes (reduced motion fallback) |
+| `--base-duration-50` | 50ms | Imperceptible micro-feedback |
+| `--base-duration-100` | 100ms | Micro-interactions (icon swap, badge update) |
+| `--base-duration-200` | 200ms | Standard micro-interactions |
+| `--base-duration-300` | 300ms | State changes (dropdown open, tab switch) |
+| `--base-duration-400` | 400ms | Larger state changes |
+| `--base-duration-500` | 500ms | Maximum for UI interactions |
+| `--base-duration-600` | 600ms | Slow non-interactive transitions |
+| `--base-duration-700` | 700ms | — |
+| `--base-duration-800` | 800ms | — |
+| `--base-duration-900` | 900ms | — |
+| `--base-duration-1000` | 1000ms | Long non-interactive animations |
+
+---
+
+## Easing tokens
+
+Easing tokens are cubic-bezier curves that control the feel of a transition. Each has a specific behavioral intent.
+
+| Token | Cubic Bezier | Description | Use when |
+|---|---|---|---|
+| `--base-easing-linear` | `cubic-bezier(0, 0, 1, 1)` | Constant, no acceleration | Continuous animations (loaders, progress bars) |
+| `--base-easing-ease` | `cubic-bezier(0.25, 0.1, 0.25, 1)` | CSS default easing | Hover state changes and micro-interactions |
+| `--base-easing-easeIn` | `cubic-bezier(0.7, 0.1, 0.75, 0.9)` | Accelerates from rest | Rarely used alone; elements leaving the viewport |
+| `--base-easing-easeOut` | `cubic-bezier(0.3, 0.8, 0.6, 1)` | Decelerates to rest | Entering viewport, modals opening, dropdowns appearing |
+| `--base-easing-easeInOut` | `cubic-bezier(0.6, 0, 0.2, 1)` | Smooth start and end | Moving or morphing elements within the viewport |
+
+---
+
+## Decision tree: selecting an easing curve
+
+Use this flowchart to choose the right easing for any animation:
+
+<Steps>
+  <Step title="Is the element entering or exiting the viewport?">
+    Use `--base-easing-easeOut`. This is the recommended default for most UI transitions (dropdowns opening, modals appearing, tooltips showing).
+  </Step>
+  <Step title="Is the element moving or morphing on screen?">
+    Use `--base-easing-easeInOut`. Use this for elements that translate position or change shape without entering/exiting (expanding accordions, sliding panels).
+  </Step>
+  <Step title="Is this a hover state change?">
+    Use `--base-easing-ease`. Use this for simple hover and focus color transitions on buttons and links.
+  </Step>
+  <Step title="Is this constant/looping motion?">
+    Use `--base-easing-linear`. Use this for spinners, progress indicators, and any animation that repeats continuously.
+  </Step>
+</Steps>
+
+---
+
+## Usage rules
+
+| Keyword | Rule |
+|---|---|
+| **MUST** | Use motion for interactive state changes (hover, focus, press). |
+| **MUST** | Keep animations ≤ 300ms for UI interactions. |
+| **MUST** | Respect `prefers-reduced-motion`—provide an instant alternative. |
+| **MUST** | Provide instant alternatives when motion is reduced. |
+| **SHOULD** | Use 100–200ms for micro-interactions (button hover, icon swap). |
+| **SHOULD** | Use 200–300ms for state changes (dropdown open, tab switch). |
+| **NEVER** | Exceed 500ms for any UI interaction. |
+| **NEVER** | Use motion purely for decoration. |
+| **NEVER** | Create indefinitely looping motion without user control. |
+| **NEVER** | Rely solely on motion to convey information. |
+
+---
+
+## Accessibility: `prefers-reduced-motion`
+
+Every element with a transition or animation must provide a zero-motion fallback inside a `prefers-reduced-motion: reduce` media query.
+
+```css
+/* Default: motion enabled */
+.btn {
+  transition:
+    background-color 150ms var(--base-easing-ease),
+    box-shadow 150ms var(--base-easing-ease),
+    transform 100ms var(--base-easing-ease);
+}
+
+/* Accessibility: disable all motion */
+@media (prefers-reduced-motion: reduce) {
+  .btn {
+    transition: none;
+  }
+}
+```
+
+---
+
+## Real CSS transition and animation examples
+
+```css
+/* Button: hover and focus transitions */
+.btn {
+  background-color: var(--control-bgColor-rest);
+  transition:
+    background-color 150ms var(--base-easing-ease),
+    box-shadow 150ms var(--base-easing-ease);
+}
+
+.btn:hover {
+  background-color: var(--control-bgColor-hover);
+}
+
+/* Dropdown: enters with easeOut */
+.dropdown-menu {
+  opacity: 0;
+  transform: translateY(-4px);
+  transition:
+    opacity 200ms var(--base-easing-easeOut),
+    transform 200ms var(--base-easing-easeOut);
+}
+
+.dropdown-menu[data-open] {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Accordion: morphs on screen with easeInOut */
+.accordion-content {
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 250ms var(--base-easing-easeInOut);
+}
+
+.accordion-content[data-open] {
+  max-height: 500px;
+}
+
+/* Loading spinner: constant linear rotation */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.spinner {
+  animation: spin 700ms var(--base-easing-linear) infinite;
+}
+
+/* Reduced motion overrides */
+@media (prefers-reduced-motion: reduce) {
+  .dropdown-menu,
+  .accordion-content {
+    transition: none;
+  }
+
+  .spinner {
+    animation: none;
+    /* Consider showing a static loading indicator instead */
+  }
+}
+```
+
+### Hover vs. morphing example
+
+<CodeGroup>
+
+```css hover-ease.css
+/* Hover state: use ease */
+.nav-link {
+  color: var(--fgColor-default);
+  transition: color 150ms var(--base-easing-ease);
+}
+
+.nav-link:hover {
+  color: var(--fgColor-accent);
+}
+```
+
+```css morph-easeinout.css
+/* Element moving on screen: use easeInOut */
+.sidebar {
+  transform: translateX(-100%);
+  transition: transform 300ms var(--base-easing-easeInOut);
+}
+
+.sidebar[data-open] {
+  transform: translateX(0);
+}
+```
+
+</CodeGroup>

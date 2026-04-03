@@ -1,0 +1,228 @@
+---
+title: "Output Formats"
+description: "Reference for all build output formats produced by Primer Primitives: CSS custom properties, JSON variants, Figma, StyleLint, and LLM guidelines."
+---
+
+The build pipeline writes all outputs to the `dist/` directory, which is the only directory published to npm. Each format serves a different consumer — web CSS, documentation tools, design tools, linting, and AI assistants.
+
+---
+
+## CSS custom properties (`dist/css/`)
+
+CSS files export every token as a CSS custom property (`--token-name`). Import one or more files to use tokens in your project.
+
+### Directory structure
+
+```
+dist/css/
+├── primitives.css                   # Convenience bundle: imports all base + functional CSS
+├── base/
+│   ├── size/
+│   │   └── size.css                 # Base size scale
+│   ├── typography/
+│   │   └── typography.css           # Base font stacks, sizes, weights
+│   └── motion/
+│       └── motion.css               # Base easing and duration values
+└── functional/
+    ├── size/
+    │   ├── border.css               # Border radius and width tokens
+    │   ├── breakpoints.css          # Responsive breakpoint tokens
+    │   ├── size.css                 # Spacing and sizing tokens
+    │   └── viewport.css             # Viewport size tokens (excluded from primitives.css)
+    ├── typography/
+    │   └── typography.css           # Functional typography tokens with references
+    ├── motion/
+    │   └── motion.css               # Functional motion tokens with references
+    └── themes/
+        ├── light.css                # Light theme color tokens
+        ├── light-high-contrast.css  # Light high-contrast theme
+        ├── light-colorblind.css     # Light colorblind (protanopia/deuteranopia) theme
+        ├── light-tritanopia.css     # Light tritanopia theme
+        ├── dark.css                 # Dark theme color tokens
+        ├── dark-high-contrast.css   # Dark high-contrast theme
+        ├── dark-colorblind.css      # Dark colorblind (protanopia/deuteranopia) theme
+        ├── dark-dimmed.css          # Dark dimmed theme
+        └── dark-tritanopia.css      # Dark tritanopia theme
+```
+
+<Note>
+Theme files in `dist/css/functional/themes/` are **not** included in `primitives.css`. Import them separately and activate a theme by setting `data-color-mode` on the `<html>` element.
+</Note>
+
+### Available CSS import paths
+
+<CodeGroup>
+
+```css Size and typography
+/* Base scale */
+@import '@primer/primitives/dist/css/base/size/size.css';
+@import '@primer/primitives/dist/css/base/typography/typography.css';
+
+/* Functional tokens */
+@import '@primer/primitives/dist/css/functional/size/border.css';
+@import '@primer/primitives/dist/css/functional/size/breakpoints.css';
+@import '@primer/primitives/dist/css/functional/size/size.css';
+@import '@primer/primitives/dist/css/functional/size/viewport.css';
+@import '@primer/primitives/dist/css/functional/typography/typography.css';
+```
+
+```css Motion
+@import '@primer/primitives/dist/css/base/motion/motion.css';
+```
+
+```css Color themes
+@import '@primer/primitives/dist/css/functional/themes/light.css';
+@import '@primer/primitives/dist/css/functional/themes/light-tritanopia.css';
+@import '@primer/primitives/dist/css/functional/themes/light-high-contrast.css';
+@import '@primer/primitives/dist/css/functional/themes/light-colorblind.css';
+@import '@primer/primitives/dist/css/functional/themes/dark.css';
+@import '@primer/primitives/dist/css/functional/themes/dark-colorblind.css';
+@import '@primer/primitives/dist/css/functional/themes/dark-dimmed.css';
+@import '@primer/primitives/dist/css/functional/themes/dark-high-contrast.css';
+@import '@primer/primitives/dist/css/functional/themes/dark-tritanopia.css';
+```
+
+```css Everything (convenience bundle)
+/* Includes all base + functional except themes and viewport */
+@import '@primer/primitives/dist/css/primitives.css';
+```
+
+</CodeGroup>
+
+<Warning>
+Motion CSS is required for components with animations (for example, `Spinner` from `@primer/react`). If animated components appear static, ensure you have imported the motion CSS.
+</Warning>
+
+---
+
+## JSON doc format (`dist/docs/`)
+
+The doc JSON format is intended for documentation tooling, Storybook, and custom token browsers. It contains the full token graph with metadata.
+
+```
+dist/docs/
+├── base/
+│   ├── size/size.json
+│   └── typography/typography.json
+└── functional/
+    ├── size/border.json
+    ├── typography/typography.json
+    ├── motion/motion.json
+    └── themes/
+        ├── light.json
+        ├── dark.json
+        └── ...
+```
+
+Each token entry in a doc JSON file includes:
+
+| Field | Description |
+|---|---|
+| `name` | Dot-notation token name (e.g. `bgColor.default`) |
+| `value` | Resolved value for the theme |
+| `type` | W3C DTCG type string |
+| `description` | Human-readable description from `$description` |
+| `path` | Array of path segments |
+| `filePath` | Source file path |
+| `extensions` | Raw `$extensions` object including Figma and LLM metadata |
+
+---
+
+## JSON fallbacks format (`dist/fallbacks/`)
+
+Fallback files provide flat key-value JSON for theme switching without relying on the CSS cascade. Used by runtime theming utilities.
+
+```
+dist/fallbacks/
+├── functional/
+│   ├── themes/
+│   │   ├── light.json
+│   │   ├── dark.json
+│   │   └── ...
+│   └── size/
+│       └── ...
+```
+
+Each file is a flat object mapping CSS custom property names to their resolved values:
+
+```json
+{
+  "--bgColor-default": "#ffffff",
+  "--bgColor-muted": "#f6f8fa"
+}
+```
+
+---
+
+## Deprecated JSON format (`dist/deprecated/`)
+
+Deprecated files map legacy token names to their current equivalents. Used for migration tooling and backwards compatibility.
+
+```
+dist/deprecated/
+├── theme.json
+├── typography.json
+├── size.json
+└── motion.json
+```
+
+Each entry includes the deprecated name, the resolved value, and (when available) the replacement token name. The format is produced by the `json/deprecated` transformer.
+
+---
+
+## Figma JSON format
+
+The Figma output is built by `npm run build:figma` and written to a location consumed by the Figma plugin. It is based on the `json/figma` format and includes `org.primer.figma` extension metadata: collection, mode, and scopes.
+
+Token entries in the Figma JSON include:
+
+| Field | Description |
+|---|---|
+| `name` | Slash-separated name for Figma variable naming |
+| `value` | Resolved color or dimension value |
+| `type` | Figma variable type |
+| `collection` | Figma collection (e.g. `mode`) |
+| `scopes` | Figma variable scopes (e.g. `bgColor`, `borderColor`) |
+| `codeSyntax` | Optional code syntax hint for the Figma UI |
+
+---
+
+## LLM guidelines (`DESIGN_TOKENS_SPEC.md`)
+
+Built by `npm run build:llm`, this Markdown file is published in the npm package and intended for AI-assisted coding tools and LLM system prompts.
+
+The file is assembled from tokens that have `org.primer.llm` metadata, plus a CSS spec header (`CSS_SPEC_HEADER`) that describes the token system at a high level.
+
+<Warning>
+`DESIGN_TOKENS_SPEC.md` is a generated file. Do not edit it directly — it is overwritten on every `build:llm` run.
+</Warning>
+
+The spec header is also prepended to `dist/css/primitives.css` and all theme CSS files so that AI tools reading those files receive context about the token system.
+
+---
+
+## StyleLint JSON format (`dist/styleLint/`)
+
+StyleLint files allow [`stylelint-config-primer`](https://github.com/primer/stylelint-config-primer) to validate that custom property usage matches defined tokens.
+
+```
+dist/styleLint/
+└── functional/
+    └── themes/
+        ├── light.json
+        └── ...
+```
+
+Each file contains an array of valid CSS custom property names for that context. The linting config references these files to flag undeclared or misspelled token names.
+
+---
+
+## Removed tokens
+
+The `dist/removed/` directory is a direct copy of `src/tokens/removed/`. It contains JSON files that list tokens that have been fully removed from the system, enabling migration tooling to surface actionable error messages.
+
+---
+
+## Internal CSS (`dist/internalCss/`)
+
+Internal CSS files are used by GitHub's internal tooling for code display (syntax highlighting, etc.). They are structured identically to theme CSS files but scoped to internal-only token subsets. These files are not intended for direct consumer use.

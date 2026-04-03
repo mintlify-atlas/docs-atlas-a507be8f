@@ -1,0 +1,212 @@
+---
+title: "Typography Tokens"
+description: "Type scale, shorthand tokens, and usage rules for Primer's typographic system."
+---
+
+Primer's typography tokens map semantic roles (display, title, body, caption) to consistent combinations of font size, line height, and font weight. The key rule: always use shorthand tokens so that all three properties stay synchronized.
+
+## Shorthand vs. individual tokens
+
+<Tabs>
+  <Tab title="Shorthand (correct)">
+    The `font` shorthand property applies `font-size`, `line-height`, and `font-weight` in a single declaration. Shorthand tokens guarantee these three values remain in sync.
+
+    ```css
+    /* MUST: use shorthand */
+    .heading {
+      font: var(--text-title-shorthand-medium);
+    }
+    ```
+  </Tab>
+  <Tab title="Individual (avoid)">
+    Individual tokens exist but you should only reach for them when you need to override a single dimension—for example, overriding line height in a custom layout.
+
+    ```css
+    /* AVOID if shorthand is available */
+    .heading {
+      font-size: var(--base-text-size-md);
+      line-height: var(--base-text-lineHeight-normal);
+      font-weight: var(--base-text-weight-semibold);
+    }
+    ```
+  </Tab>
+</Tabs>
+
+<Warning>
+  Never mix individual `font-size` or `line-height` tokens with shorthand tokens on the same element. Pick one approach per element.
+</Warning>
+
+---
+
+## Base type scale
+
+These are the raw size primitives. Use them only to build functional tokens or when no shorthand exists for your use case.
+
+| Token | Value | px equivalent | Description |
+|---|---|---|---|
+| `--base-text-size-xs` | 0.75rem | 12px | Smallest text; captions, compact labels |
+| `--base-text-size-sm` | 0.875rem | 14px | Default UI body text |
+| `--base-text-size-md` | 1rem | 16px | Large body text, small titles |
+| `--base-text-size-lg` | 1.25rem | 20px | Medium titles and subtitles |
+| `--base-text-size-xl` | 2rem | 32px | Large page headings |
+| `--base-text-size-2xl` | 2.5rem | 40px | Display text for hero sections |
+
+### Font weights
+
+| Token | Value | Description |
+|---|---|---|
+| `--base-text-weight-light` | 300 | Light—rarely used |
+| `--base-text-weight-normal` | 400 | Default body weight |
+| `--base-text-weight-medium` | 500 | Medium emphasis |
+| `--base-text-weight-semibold` | 600 | Headings and strong emphasis |
+
+### Line heights
+
+| Token | Value | Use when |
+|---|---|---|
+| `--base-text-lineHeight-tight` | 1.25 | Single-line labels, badges, buttons |
+| `--base-text-lineHeight-snug` | 1.375 | Display text and large headings |
+| `--base-text-lineHeight-normal` | 1.5 | Body text (default choice) |
+| `--base-text-lineHeight-relaxed` | 1.625 | Longer-form content and small text (12–13px) |
+| `--base-text-lineHeight-loose` | 1.75 | Footnotes, legal text, maximum accessibility |
+
+---
+
+## Semantic shorthand tokens
+
+The shorthand token naming pattern is:
+
+```
+--text-[role]-shorthand-[size]
+```
+
+Where:
+- **role**: `display` | `title` | `body` | `subtitle` | `caption` | `codeBlock` | `codeInline`
+- **size**: `small` | `medium` | `large`
+
+### Roles and when to use them
+
+<AccordionGroup>
+  <Accordion title="display">
+    Hero text for marketing pages, landing sections, and full-page headings. The largest typographic scale.
+
+    ```css
+    .hero-heading {
+      font: var(--text-display-shorthand-large);
+    }
+    ```
+  </Accordion>
+  <Accordion title="title">
+    Section headings and UI-level titles (page headers, dialog titles, sidebar section labels). Match the token size to the visual hierarchy level.
+
+    ```css
+    .page-title   { font: var(--text-title-shorthand-large); }
+    .section-title { font: var(--text-title-shorthand-medium); }
+    .subsection    { font: var(--text-title-shorthand-small); }
+    ```
+  </Accordion>
+  <Accordion title="body">
+    Prose, descriptions, and general UI content. `body-medium` is the workhorse for most product UI.
+
+    ```css
+    p {
+      font: var(--text-body-shorthand-medium);
+    }
+    ```
+  </Accordion>
+  <Accordion title="subtitle">
+    Supporting text beneath titles, card subtitles, and secondary headings.
+
+    ```css
+    .card-subtitle {
+      font: var(--text-subtitle-shorthand-medium);
+    }
+    ```
+  </Accordion>
+  <Accordion title="caption">
+    Metadata, timestamps, helper text, and annotation labels. Never use for multi-line body text—the tight line height reduces readability at length.
+
+    ```css
+    .timestamp {
+      font: var(--text-caption-shorthand-small);
+      color: var(--fgColor-muted);
+    }
+    ```
+  </Accordion>
+  <Accordion title="codeBlock and codeInline">
+    Monospaced tokens for code. Use `codeBlock` for fenced code regions and `codeInline` for inline `<code>` spans.
+
+    ```css
+    pre code {
+      font: var(--text-codeBlock-shorthand-medium);
+    }
+
+    code {
+      font: var(--text-codeInline-shorthand-medium);
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Usage rules
+
+| Keyword | Rule |
+|---|---|
+| **MUST** | Use shorthand tokens (`font: var(...)`) to keep line height and font weight in sync. |
+| **MUST** | Use `codeBlock` for multi-line code blocks; use `codeInline` for inline spans. |
+| **SHOULD** | Match the token to the semantic role: use `title` tokens for headings, not an oversized `body` token. |
+| **SHOULD** | Downgrade one size on mobile (e.g. `title-large` → `title-medium`). |
+| **NEVER** | Use individual `font-size` or `line-height` tokens when a shorthand variant exists. |
+| **NEVER** | Use `text-caption-shorthand` for multi-line body text—the tight line height fails readability. |
+
+---
+
+## Real CSS usage examples
+
+```css
+/* Page heading */
+h1 {
+  font: var(--text-title-shorthand-large);
+  color: var(--fgColor-default);
+}
+
+/* Body text */
+p {
+  font: var(--text-body-shorthand-medium);
+  color: var(--fgColor-default);
+}
+
+/* Secondary/muted helper text */
+.helper-text {
+  font: var(--text-caption-shorthand-small);
+  color: var(--fgColor-muted);
+}
+
+/* Multi-line code block */
+pre code {
+  font: var(--text-codeBlock-shorthand-medium);
+  background-color: var(--bgColor-muted);
+  padding: var(--stack-padding-condensed);
+}
+
+/* Inline code span */
+code {
+  font: var(--text-codeInline-shorthand-medium);
+  background-color: var(--bgColor-muted);
+  border-radius: var(--borderRadius-small);
+  padding-inline: 0.25em;
+}
+
+/* Responsive title: downgrade on mobile */
+.section-title {
+  font: var(--text-title-shorthand-large);
+}
+
+@media (max-width: 768px) {
+  .section-title {
+    font: var(--text-title-shorthand-medium);
+  }
+}
+```

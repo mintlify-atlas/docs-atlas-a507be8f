@@ -1,0 +1,249 @@
+---
+title: "Border & Shadow Tokens"
+description: "Border radius, border width, border color, shadow elevation, z-index, and focus ring tokens for Primer UI."
+---
+
+Border and shadow tokens control the geometry, color, and elevation of UI surfaces. They are split into four groups: border radius, border width/style, shadow, and z-index. All four must be used from tokens—never raw pixel values or arbitrary z-index numbers.
+
+---
+
+## Border radius tokens
+
+| Token | Value | Utility class | Use for |
+|---|---|---|---|
+| `--borderRadius-small` | 3px | `.rounded-1` | Small elements under 16px: badges, tags, labels |
+| `--borderRadius-medium` | 6px | `.rounded-2` | Buttons, inputs, cards, containers (default) |
+| `--borderRadius-large` | 12px | `.rounded-3` | Dialogs, modals, larger containers |
+| `--borderRadius-full` | 9999px | `.circle` | Avatars, pill badges, circular buttons |
+| `--borderRadius-default` | 6px (alias) | `.rounded-2` | Default alias—use when unsure |
+
+<Tip>
+  When in doubt, reach for `--borderRadius-medium`. It is the correct default for the majority of buttons, inputs, and content cards.
+</Tip>
+
+---
+
+## Border width tokens
+
+| Token | Value | Description |
+|---|---|---|
+| `--borderWidth-default` | 1px | Standard border for most elements (alias of `--borderWidth-thin`) |
+| `--borderWidth-thin` | 1px | Dividers, card outlines, input borders |
+| `--borderWidth-thick` | 2px | Focus rings, selected states, emphasis borders |
+| `--borderWidth-thicker` | 4px | High-emphasis borders; use sparingly |
+
+### Inset box-shadow alternatives
+
+When you need a border that does not affect layout (for animated or interactive elements), use the inset shadow shorthands:
+
+| Token | Description |
+|---|---|
+| `--boxShadow-thin` | `inset 0 0 0 1px` — layout-safe thin border |
+| `--boxShadow-thick` | `inset 0 0 0 2px` — layout-safe thick border |
+| `--boxShadow-thicker` | `inset 0 0 0 4px` — layout-safe maximum border |
+
+### Focus outline dimensions
+
+| Token | Value | Description |
+|---|---|---|
+| `--outline-focus-width` | 2px | Focus ring stroke width (meets WCAG 2.4.7) |
+| `--outline-focus-offset` | -2px | Negative offset keeps focus ring inset within bounds |
+
+---
+
+## Border color tokens
+
+Border color tokens resolve to a single color value and apply only to `border-color`. For the full `border` shorthand, use `border.*` tokens.
+
+### Base border tokens
+
+| Token | Description |
+|---|---|
+| `--borderColor-default` | Standard border for cards, inputs, dividers (recommended default) |
+| `--borderColor-muted` | Subtle border for secondary separators |
+| `--borderColor-emphasis` | Stronger border for selected or prominent elements |
+| `--borderColor-disabled` | Border for disabled form elements |
+| `--borderColor-transparent` | Fully transparent border (placeholder) |
+| `--borderColor-translucent` | Semi-transparent border for overlays |
+
+### Semantic status border tokens
+
+| Token | Description |
+|---|---|
+| `--borderColor-accent-muted` / `--borderColor-accent-emphasis` | Selected, focused, or informational elements |
+| `--borderColor-success-muted` / `--borderColor-success-emphasis` | Success state borders |
+| `--borderColor-attention-muted` / `--borderColor-attention-emphasis` | Warning state borders |
+| `--borderColor-severe-muted` / `--borderColor-severe-emphasis` | High-priority warning borders |
+| `--borderColor-danger-muted` / `--borderColor-danger-emphasis` | Error and destructive action borders |
+| `--borderColor-neutral-muted` / `--borderColor-neutral-emphasis` | Neutral semantic borders |
+| `--borderColor-open-muted` / `--borderColor-open-emphasis` | Open issue/PR borders |
+| `--borderColor-closed-muted` / `--borderColor-closed-emphasis` | Closed issue/PR borders |
+| `--borderColor-draft-muted` / `--borderColor-draft-emphasis` | Draft state borders |
+| `--borderColor-done-muted` / `--borderColor-done-emphasis` | Completed/merged borders |
+| `--borderColor-sponsors-muted` / `--borderColor-sponsors-emphasis` | GitHub Sponsors borders |
+| `--borderColor-upsell-muted` / `--borderColor-upsell-emphasis` | Upsell/premium feature borders |
+
+---
+
+## Focus ring token
+
+The focus outline for interactive elements is a single composite token:
+
+| Token | Property | Use for |
+|---|---|---|
+| `--focus-outlineColor` | Color of the focus ring | Focus indicators on buttons, links, inputs |
+
+Always use `:focus-visible` (not `:focus`) to avoid showing the focus ring on mouse click:
+
+```css
+.btn:focus-visible {
+  outline: var(--outline-focus-width) solid var(--focus-outlineColor);
+  outline-offset: var(--outline-focus-offset);
+}
+```
+
+---
+
+## Shadow tokens
+
+Shadows are organized into two categories: **resting** (elements on the page surface) and **floating** (elements that lift above the page).
+
+### Resting shadows
+
+| Token | Description | Use for |
+|---|---|---|
+| `--shadow-resting-xsmall` | Minimal 1px lift | Badges, chips, subtle elevation |
+| `--shadow-resting-small` | Subtle clickable depth | Buttons, small interactive cards |
+| `--shadow-resting-medium` | Moderate panel elevation | Cards, content panels, elevated sidebars |
+
+### Floating shadows
+
+| Token | Description | Use for |
+|---|---|---|
+| `--shadow-floating-small` | Small floating surface | Dropdown menus, tooltips, small popovers |
+| `--shadow-floating-medium` | Medium floating surface | Popovers, action menus, select panels |
+| `--shadow-floating-large` | Large floating surface | Modal dialogs |
+| `--shadow-floating-xlarge` | Maximum elevation | Full-screen overlays, drawers, side sheets |
+
+### Inset shadow
+
+| Token | Description | Use for |
+|---|---|---|
+| `--shadow-inset` | Recessed inner shadow | Input fields, wells, pressed states |
+
+---
+
+## Z-index tokens
+
+Z-index tokens define the stacking layer for elevated UI elements. Never use raw numeric z-index values.
+
+```
+--zIndex-[layer]
+  └── layer: behind | default | sticky | dropdown | overlay | modal | popover | skipLink
+```
+
+| Token | Numeric value | Use for |
+|---|---|---|
+| `--zIndex-behind` | -1 | Decorative backgrounds behind content |
+| `--zIndex-default` | 0 | In-flow elements, explicit resets |
+| `--zIndex-sticky` | 100 | Sticky headers, sticky sidebars, sticky nav |
+| `--zIndex-dropdown` | 200 | Dropdown menus, select panels, autocomplete lists |
+| `--zIndex-overlay` | 300 | Drawers, side panels, overlay backdrops |
+| `--zIndex-modal` | 400 | Modal dialogs, confirm dialogs, lightboxes |
+| `--zIndex-popover` | 500 | Tooltips, popovers, hover cards |
+| `--zIndex-skipLink` | 600 | Accessibility skip-navigation links only |
+
+### Shadow ↔ z-index alignment
+
+Shadow level and z-index must align. Using a large shadow on a sticky header or a resting shadow on a modal creates inconsistent visual hierarchy.
+
+| Shadow level | Correct z-index token | Example components |
+|---|---|---|
+| `shadow-resting.*` | `--zIndex-default` / `--zIndex-sticky` | Cards, sticky headers |
+| `shadow-floating-small` / `shadow-floating-medium` | `--zIndex-dropdown` / `--zIndex-overlay` | Menus, drawers |
+| `shadow-floating-large` / `shadow-floating-xlarge` | `--zIndex-modal` / `--zIndex-popover` | Dialogs, tooltips |
+
+### Z-index rules
+
+| Keyword | Rule |
+|---|---|
+| **MUST** | Use z-index tokens; never raw numbers. |
+| **MUST** | Use `--zIndex-skipLink` only for accessibility skip links. |
+| **MUST** | Pair z-index with the matching shadow level (table above). |
+| **SHOULD** | Prefer `isolation: isolate` to create a new stacking context rather than escalating z-index. |
+| **NEVER** | Use `--zIndex-behind` (-1) without verifying that no ancestor creates a stacking context (via `transform`, `opacity < 1`, `filter`, `will-change`). |
+| **NEVER** | Use arbitrary z-index values outside the token scale. |
+
+---
+
+## Real CSS examples
+
+```css
+/* Standard card */
+.card {
+  background-color: var(--bgColor-default);
+  border: 1px solid var(--borderColor-default);
+  border-radius: var(--borderRadius-medium);
+  box-shadow: var(--shadow-resting-small);
+  padding: var(--stack-padding-normal);
+}
+
+/* Danger (error) input */
+.input-danger {
+  border: 1px solid var(--borderColor-danger-emphasis);
+  border-radius: var(--borderRadius-medium);
+  background-color: var(--bgColor-danger-muted);
+}
+
+/* Dropdown menu */
+.dropdown {
+  position: absolute;
+  z-index: var(--zIndex-dropdown);
+  box-shadow: var(--shadow-floating-small);
+  border-radius: var(--borderRadius-medium);
+  background-color: var(--bgColor-default);
+  border: 1px solid var(--borderColor-default);
+}
+
+/* Modal dialog */
+.modal {
+  position: fixed;
+  z-index: var(--zIndex-modal);
+  box-shadow: var(--shadow-floating-large);
+  border-radius: var(--borderRadius-large);
+  background-color: var(--bgColor-default);
+}
+
+/* Tooltip */
+.tooltip {
+  position: absolute;
+  z-index: var(--zIndex-popover);
+  box-shadow: var(--shadow-floating-small);
+  border-radius: var(--borderRadius-small);
+  background-color: var(--bgColor-emphasis);
+  color: var(--fgColor-onEmphasis);
+  padding-inline: var(--control-small-paddingInline-normal);
+  padding-block: var(--control-small-paddingBlock);
+}
+
+/* Focus ring on interactive element */
+.btn:focus-visible {
+  outline: var(--outline-focus-width) solid var(--focus-outlineColor);
+  outline-offset: var(--outline-focus-offset);
+}
+
+/* Avatar */
+.avatar {
+  border-radius: var(--borderRadius-full);
+  border: 1px solid var(--borderColor-default);
+}
+
+/* Sticky table header */
+.table-header-sticky {
+  position: sticky;
+  top: 0;
+  z-index: var(--zIndex-sticky);
+  box-shadow: var(--shadow-resting-xsmall);
+  background-color: var(--bgColor-muted);
+}
+```

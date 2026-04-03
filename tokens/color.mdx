@@ -1,0 +1,220 @@
+---
+title: "Color Tokens"
+description: "Semantic color tokens for backgrounds, foregrounds, and borders across all Primer themes."
+---
+
+Color tokens in Primer follow a three-layer system that separates raw values from intent. You never use hex codes or raw values in your CSS—only semantic tokens that adapt automatically to every theme (light, dark, high contrast, color-blind modes).
+
+## The three-layer system
+
+<Steps>
+  <Step title="Base colors">
+    Raw palette values such as `{base.color.blue.5}`. These are never used directly in product code. They exist so functional tokens can reference a single source of truth.
+  </Step>
+  <Step title="Functional semantic tokens">
+    Theme-aware tokens with intent baked in—`--bgColor-accent-emphasis`, `--fgColor-danger`. These are what you use in your CSS.
+  </Step>
+  <Step title="Component tokens">
+    Tokens scoped to a specific component, such as `--control-bgColor-rest`. Use these only when building or overriding a component that owns that namespace.
+  </Step>
+</Steps>
+
+---
+
+## Background color tokens
+
+Background tokens follow the pattern `--bgColor-[semantic]-[modifier]`.
+
+### Base surface tokens
+
+| CSS variable | Description | Use for |
+|---|---|---|
+| `--bgColor-default` | Primary page surface | Pages, main content areas, cards |
+| `--bgColor-muted` | Secondary surface | Sidebars, table headers, code backgrounds |
+| `--bgColor-inset` | Recessed surface | Input fields, wells, sunken panels |
+| `--bgColor-emphasis` | High-contrast dark surface | Tooltips, badges (pair with `--fgColor-onEmphasis`) |
+| `--bgColor-inverse` | Opposite-theme surface | Inverted UI elements |
+| `--bgColor-disabled` | Disabled element background | Disabled buttons, disabled inputs |
+| `--bgColor-transparent` | No background | Ghost buttons, icon buttons |
+
+### Semantic status tokens
+
+| CSS variable | Modifier | Description |
+|---|---|---|
+| `--bgColor-accent-muted` | muted | Selected rows, info banners, active nav items |
+| `--bgColor-accent-emphasis` | emphasis | Active states, current selections |
+| `--bgColor-success-muted` | muted | Success messages, completed states |
+| `--bgColor-success-emphasis` | emphasis | Merge buttons, confirm actions |
+| `--bgColor-attention-muted` | muted | Warning banners, caution messages |
+| `--bgColor-attention-emphasis` | emphasis | Warning badges |
+| `--bgColor-severe-muted` | muted | High-priority warnings |
+| `--bgColor-severe-emphasis` | emphasis | Severe warning badges |
+| `--bgColor-danger-muted` | muted | Error messages, destructive contexts |
+| `--bgColor-danger-emphasis` | emphasis | Delete buttons, critical alerts |
+| `--bgColor-neutral-muted` | muted | Neutral labels, counters, secondary tags |
+| `--bgColor-neutral-emphasis` | emphasis | Neutral buttons, secondary actions |
+
+### State-specific tokens
+
+| CSS variable | Description |
+|---|---|
+| `--bgColor-open-muted` / `--bgColor-open-emphasis` | Open issues and PRs |
+| `--bgColor-closed-muted` / `--bgColor-closed-emphasis` | Closed issues and PRs |
+| `--bgColor-draft-muted` / `--bgColor-draft-emphasis` | Draft PRs and issues |
+| `--bgColor-done-muted` / `--bgColor-done-emphasis` | Completed/merged states |
+| `--bgColor-sponsors-muted` / `--bgColor-sponsors-emphasis` | GitHub Sponsors content |
+| `--bgColor-upsell-muted` / `--bgColor-upsell-emphasis` | Upgrade prompts, premium features |
+
+<Warning>
+  Never use `--bgColor-white` or `--bgColor-black`. These tokens exist for internal use only and bypass theme preferences and accessibility settings. Use `--bgColor-default` or `--bgColor-emphasis` instead.
+</Warning>
+
+---
+
+## Foreground color tokens
+
+Foreground tokens follow the pattern `--fgColor-[semantic]` and apply to text, icons, and other content rendered on top of backgrounds.
+
+### Base foreground tokens
+
+| CSS variable | Description | Use for |
+|---|---|---|
+| `--fgColor-default` | Primary text | Headings, body text, primary labels |
+| `--fgColor-muted` | Secondary text | Timestamps, metadata, helper text, placeholders |
+| `--fgColor-onEmphasis` | Text on emphasis backgrounds | Text on any `--bgColor-*-emphasis` surface |
+| `--fgColor-onInverse` | Text on inverse backgrounds | Text on `--bgColor-inverse` |
+| `--fgColor-disabled` | Disabled text | Disabled buttons, inactive elements |
+| `--fgColor-link` | Link text | All hyperlinks (maps to `--fgColor-accent`) |
+
+### Semantic foreground tokens
+
+| CSS variable | Description |
+|---|---|
+| `--fgColor-accent` | Accent/info text and icons |
+| `--fgColor-success` | Success/positive feedback text |
+| `--fgColor-attention` | Warning/caution text |
+| `--fgColor-severe` | High-priority warning text |
+| `--fgColor-danger` | Error and destructive action text |
+| `--fgColor-neutral` | Neutral semantic icons and text |
+| `--fgColor-done` | Completed/merged state text |
+| `--fgColor-open` | Open issue/PR text |
+| `--fgColor-closed` | Closed issue/PR text |
+| `--fgColor-draft` | Draft state text |
+| `--fgColor-sponsors` | GitHub Sponsors text |
+| `--fgColor-upsell` | Upsell/premium feature text |
+
+---
+
+## Color pairing rules
+
+Every background token has exactly one correct foreground pairing. Violating these rules will fail WCAG AA contrast requirements in one or more themes.
+
+| Background token | Required foreground token | Notes |
+|---|---|---|
+| `--bgColor-*-emphasis` | `--fgColor-onEmphasis` | MUST pair—no exception |
+| `--bgColor-*-muted` | `--fgColor-{same semantic}` | MUST use the matching semantic fg |
+| `--bgColor-default` | `--fgColor-default` | Standard pairing |
+| `--bgColor-muted` | `--fgColor-default` | NEVER use `--fgColor-muted` here |
+
+### Contrast requirements
+
+| Context | Minimum ratio | Standard |
+|---|---|---|
+| Normal text (under 18px / under 14px bold) | 4.5:1 | WCAG AA |
+| Large text and UI components | 3:1 | WCAG AA |
+
+### Correct and incorrect examples
+
+<CodeGroup>
+
+```css correct.css
+/* Correct: emphasis bg paired with onEmphasis fg */
+.badge-danger {
+  background-color: var(--bgColor-danger-emphasis);
+  color: var(--fgColor-onEmphasis);
+}
+
+/* Correct: muted bg paired with matching semantic fg */
+.banner-warning {
+  background-color: var(--bgColor-attention-muted);
+  color: var(--fgColor-attention);
+}
+
+/* Correct: default bg with default fg */
+.card {
+  background-color: var(--bgColor-default);
+  color: var(--fgColor-default);
+}
+
+/* Correct: muted bg uses default fg, never fgColor-muted */
+.sidebar {
+  background-color: var(--bgColor-muted);
+  color: var(--fgColor-default);
+}
+```
+
+```css incorrect.css
+/* WRONG: emphasis bg needs fgColor-onEmphasis */
+.badge-danger {
+  background-color: var(--bgColor-danger-emphasis);
+  color: var(--fgColor-danger); /* contrast failure in dark mode */
+}
+
+/* WRONG: muted bg must not use fgColor-muted */
+.sidebar {
+  background-color: var(--bgColor-muted);
+  color: var(--fgColor-muted); /* fails contrast in high-contrast themes */
+}
+
+/* WRONG: never use raw hex values */
+.card {
+  background-color: #ffffff;
+  color: #24292f;
+}
+```
+
+</CodeGroup>
+
+---
+
+## Real CSS usage examples
+
+```css
+/* Page layout */
+body {
+  background-color: var(--bgColor-default);
+  color: var(--fgColor-default);
+}
+
+/* Secondary content area */
+.sidebar {
+  background-color: var(--bgColor-muted);
+  color: var(--fgColor-default);
+  border-right: 1px solid var(--borderColor-default);
+}
+
+/* Success banner */
+.banner-success {
+  background-color: var(--bgColor-success-muted);
+  color: var(--fgColor-success);
+  border: 1px solid var(--borderColor-success-muted);
+}
+
+/* Danger/destructive badge */
+.badge-closed {
+  background-color: var(--bgColor-danger-emphasis);
+  color: var(--fgColor-onEmphasis);
+}
+
+/* Disabled button */
+.btn:disabled {
+  background-color: var(--bgColor-disabled);
+  color: var(--fgColor-disabled);
+  cursor: not-allowed;
+}
+
+/* Link */
+a {
+  color: var(--fgColor-link);
+}
+```

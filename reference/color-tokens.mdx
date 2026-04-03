@@ -1,0 +1,227 @@
+---
+title: "Color Token Reference"
+description: "Complete reference for all Primer color tokens: background, foreground, border, and control color tokens."
+---
+
+Color tokens are theme-aware CSS custom properties that resolve to the correct value in every Primer theme (light, dark, high contrast, and color-blind modes). All tokens follow the pattern `--[category]-[semantic]-[modifier]`.
+
+<Note>
+These are **semantic tokens** — never use base palette values like `{base.color.blue.5}` directly in product code.
+</Note>
+
+---
+
+## Background color tokens
+
+Background color tokens follow the pattern `--bgColor-[semantic]-[modifier]`. Use them with the CSS `background-color` property.
+
+### Base surface tokens
+
+| Token | Type | Description |
+|---|---|---|
+| `--bgColor-default` | color | Default background for pages and main content areas |
+| `--bgColor-muted` | color | Secondary background for sidebars, table headers, code blocks |
+| `--bgColor-inset` | color | Recessed background for input fields, wells, sunken panels |
+| `--bgColor-emphasis` | color | High-contrast dark background for tooltips, badges |
+| `--bgColor-inverse` | color | Opposite-theme background; flips between light and dark modes |
+| `--bgColor-disabled` | color | Background for disabled interactive elements |
+| `--bgColor-transparent` | color | Fully transparent background for ghost and icon buttons |
+| `--bgColor-white` | color | Pure white background — avoid; use `--bgColor-default` instead |
+| `--bgColor-black` | color | Pure black background — avoid; use `--bgColor-emphasis` instead |
+
+### Neutral tokens
+
+| Token | Type | Description |
+|---|---|---|
+| `--bgColor-neutral-muted` | color | Subtle neutral background for tags, labels, and counters |
+| `--bgColor-neutral-emphasis` | color | Strong neutral background for prominent neutral elements |
+
+### Accent tokens
+
+| Token | Type | Description |
+|---|---|---|
+| `--bgColor-accent-muted` | color | Subtle accent background for selected rows and info banners |
+| `--bgColor-accent-emphasis` | color | Strong accent background for active states and focus |
+
+### Status tokens
+
+| Token | Modifier | Description |
+|---|---|---|
+| `--bgColor-success-muted` | muted | Subtle background for success messages and completed states |
+| `--bgColor-success-emphasis` | emphasis | Strong background for merge buttons and confirm actions |
+| `--bgColor-attention-muted` | muted | Subtle background for warning banners and caution states |
+| `--bgColor-attention-emphasis` | emphasis | Strong background for prominent warnings |
+| `--bgColor-severe-muted` | muted | Subtle background for high-priority warnings |
+| `--bgColor-severe-emphasis` | emphasis | Strong background for prominent severe warnings |
+| `--bgColor-danger-muted` | muted | Subtle background for error states and destructive contexts |
+| `--bgColor-danger-emphasis` | emphasis | Strong background for delete buttons and critical alerts |
+
+### State-specific tokens
+
+| Token | Modifier | Description |
+|---|---|---|
+| `--bgColor-open-muted` | muted | Subtle background for open issue/PR indicators |
+| `--bgColor-open-emphasis` | emphasis | Strong background for open state badges |
+| `--bgColor-closed-muted` | muted | Subtle background for closed issue/PR indicators |
+| `--bgColor-closed-emphasis` | emphasis | Strong background for closed state badges |
+| `--bgColor-draft-muted` | muted | Subtle background for draft PR indicators |
+| `--bgColor-draft-emphasis` | emphasis | Strong background for draft state badges |
+| `--bgColor-done-muted` | muted | Subtle background for completed/done state indicators |
+| `--bgColor-done-emphasis` | emphasis | Strong background for merged/done state badges |
+| `--bgColor-upsell-muted` | muted | Subtle background for upgrade prompts and premium features |
+| `--bgColor-upsell-emphasis` | emphasis | Strong background for prominent upsell CTAs |
+| `--bgColor-sponsors-muted` | muted | Subtle background for GitHub Sponsors content |
+| `--bgColor-sponsors-emphasis` | emphasis | Strong background for prominent Sponsors elements |
+
+---
+
+## Foreground color tokens
+
+Foreground color tokens follow the pattern `--fgColor-[semantic]`. Use them with the CSS `color` property for text and icons.
+
+| Token | Type | Description |
+|---|---|---|
+| `--fgColor-default` | color | Primary text color for headings and body text |
+| `--fgColor-muted` | color | Secondary text for timestamps, metadata, and helper text |
+| `--fgColor-onEmphasis` | color | Text on any `*-emphasis` background — ensures contrast |
+| `--fgColor-onInverse` | color | Text on `--bgColor-inverse` backgrounds |
+| `--fgColor-disabled` | color | Text color for disabled interactive elements |
+| `--fgColor-link` | color | Text color for hyperlinks; alias of `--fgColor-accent` |
+| `--fgColor-neutral` | color | Neutral semantic text for icons and secondary elements |
+| `--fgColor-accent` | color | Accent text for links and interactive elements |
+| `--fgColor-success` | color | Text for positive feedback and completed states |
+| `--fgColor-open` | color | Text for open issue/PR status indicators |
+| `--fgColor-attention` | color | Text for warnings and caution states |
+| `--fgColor-severe` | color | Text for high-priority warnings |
+| `--fgColor-danger` | color | Text for errors and destructive actions |
+| `--fgColor-closed` | color | Text for closed issue/PR status indicators |
+| `--fgColor-draft` | color | Text for draft state indicators |
+| `--fgColor-done` | color | Text for completed/done state indicators |
+| `--fgColor-upsell` | color | Text for upsell and promotional content |
+| `--fgColor-sponsors` | color | Text for GitHub Sponsors content |
+| `--fgColor-white` | color | Pure white text — avoid; use `--fgColor-onEmphasis` instead |
+| `--fgColor-black` | color | Pure black text — avoid; use `--fgColor-default` instead |
+
+---
+
+## Border color tokens
+
+Border color tokens follow the pattern `--borderColor-[semantic]-[modifier]`. These tokens resolve to a **color value only** — use them with `border-color`, not the `border` shorthand.
+
+<Info>
+For composite border shorthand (color + style + width), use `border.*` tokens instead.
+</Info>
+
+### Base border tokens
+
+| Token | Type | Description |
+|---|---|---|
+| `--borderColor-default` | color | Default border for cards, inputs, and dividers |
+| `--borderColor-muted` | color | Subtle border for secondary elements and separators |
+| `--borderColor-emphasis` | color | Strong border for emphasis and visual weight |
+| `--borderColor-disabled` | color | Border for disabled interactive elements |
+| `--borderColor-transparent` | color | Fully transparent border |
+| `--borderColor-translucent` | color | Semi-transparent border for overlays and layered elements |
+
+### Semantic border tokens
+
+| Token | Modifier | Description |
+|---|---|---|
+| `--borderColor-neutral-muted` | muted | Subtle neutral semantic border for tags and badges |
+| `--borderColor-neutral-emphasis` | emphasis | Strong neutral semantic border |
+| `--borderColor-accent-muted` | muted | Subtle accent border for selected or focused elements |
+| `--borderColor-accent-emphasis` | emphasis | Strong accent border for selected and focus states |
+| `--borderColor-success-muted` | muted | Subtle success border for positive feedback elements |
+| `--borderColor-success-emphasis` | emphasis | Strong success border for prominent positive elements |
+| `--borderColor-open-muted` | muted | Subtle border for open issue/PR indicators |
+| `--borderColor-open-emphasis` | emphasis | Strong border for open state badges |
+| `--borderColor-attention-muted` | muted | Subtle border for warnings and caution states |
+| `--borderColor-attention-emphasis` | emphasis | Strong border for prominent warnings |
+| `--borderColor-severe-muted` | muted | Subtle border for high-priority warnings |
+| `--borderColor-severe-emphasis` | emphasis | Strong border for prominent severe warnings |
+| `--borderColor-danger-muted` | muted | Subtle border for errors and destructive contexts |
+| `--borderColor-danger-emphasis` | emphasis | Strong border for destructive actions and errors |
+| `--borderColor-closed-muted` | muted | Subtle border for closed issue/PR indicators |
+| `--borderColor-closed-emphasis` | emphasis | Strong border for closed state badges |
+| `--borderColor-draft-muted` | muted | Subtle border for draft state indicators |
+| `--borderColor-draft-emphasis` | emphasis | Strong border for draft state badges |
+| `--borderColor-done-muted` | muted | Subtle border for completed/done state indicators |
+| `--borderColor-done-emphasis` | emphasis | Strong border for done state badges |
+| `--borderColor-upsell-muted` | muted | Subtle border for upsell and promotional content |
+| `--borderColor-upsell-emphasis` | emphasis | Strong border for prominent upsell elements |
+| `--borderColor-sponsors-muted` | muted | Subtle border for GitHub Sponsors content |
+| `--borderColor-sponsors-emphasis` | emphasis | Strong border for prominent Sponsors elements |
+
+---
+
+## Control color tokens
+
+Control tokens are scoped to interactive form elements (buttons, inputs, selects, checkboxes). They follow the pattern `--control-[property]-[state]`.
+
+### Background tokens
+
+| Token | Type | Description |
+|---|---|---|
+| `--control-bgColor-rest` | color | Default background at rest state |
+| `--control-bgColor-hover` | color | Background on hover |
+| `--control-bgColor-active` | color | Background while being pressed |
+| `--control-bgColor-disabled` | color | Background for disabled state; aliases `--bgColor-disabled` |
+| `--control-bgColor-selected` | color | Background for selected/active state |
+
+### Foreground tokens
+
+| Token | Type | Description |
+|---|---|---|
+| `--control-fgColor-rest` | color | Text color at rest state |
+| `--control-fgColor-placeholder` | color | Placeholder text color |
+| `--control-fgColor-disabled` | color | Text color for disabled state |
+
+### Border tokens
+
+| Token | Type | Description |
+|---|---|---|
+| `--control-borderColor-rest` | color | Border at rest state |
+| `--control-borderColor-emphasis` | color | Emphasized border |
+| `--control-borderColor-disabled` | color | Border for disabled state |
+| `--control-borderColor-selected` | color | Border for selected state |
+| `--control-borderColor-success` | color | Border for success/valid state |
+| `--control-borderColor-danger` | color | Border for error/invalid state |
+| `--control-borderColor-warning` | color | Border for warning state |
+
+### Transparent control tokens
+
+Ghost buttons and tertiary actions that show no background at rest use these tokens:
+
+| Token | Type | Description |
+|---|---|---|
+| `--control-transparent-bgColor-rest` | color | Transparent background at rest |
+| `--control-transparent-bgColor-hover` | color | Subtle background on hover |
+| `--control-transparent-bgColor-active` | color | Subtle background while pressed |
+| `--control-transparent-bgColor-disabled` | color | Background for disabled transparent control |
+| `--control-transparent-bgColor-selected` | color | Background for selected transparent control |
+| `--control-transparent-borderColor-rest` | color | Transparent border at rest |
+| `--control-transparent-borderColor-hover` | color | Border on hover |
+| `--control-transparent-borderColor-active` | color | Border while pressed |
+
+### Checked state tokens
+
+Checkboxes, radio buttons, and toggle switches in their checked state use these tokens:
+
+| Token | Type | Description |
+|---|---|---|
+| `--control-checked-bgColor-rest` | color | Background for checked state at rest |
+| `--control-checked-bgColor-hover` | color | Background for checked state on hover |
+| `--control-checked-bgColor-active` | color | Background for checked state while pressed |
+| `--control-checked-bgColor-disabled` | color | Background for disabled checked state |
+| `--control-checked-fgColor-rest` | color | Foreground (checkmark) color at rest |
+| `--control-checked-fgColor-disabled` | color | Foreground for disabled checked state |
+| `--control-checked-borderColor-rest` | color | Border for checked state at rest |
+| `--control-checked-borderColor-hover` | color | Border for checked state on hover |
+| `--control-checked-borderColor-active` | color | Border for checked state while pressed |
+| `--control-checked-borderColor-disabled` | color | Border for disabled checked state |
+
+---
+
+## Shadow tokens
+
+Shadow tokens are documented alongside the border tokens. See the [border and shadow tokens](/tokens/border-shadow) overview for `--boxShadow-thin`, `--boxShadow-thick`, and `--boxShadow-thicker`.

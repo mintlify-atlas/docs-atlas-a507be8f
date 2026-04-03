@@ -1,0 +1,140 @@
+---
+title: "Motion Token Reference"
+description: "Complete reference for Primer motion tokens: duration values and easing curves for animations and transitions."
+---
+
+Motion tokens define the timing and pacing of animations and transitions in Primer. They are base-layer tokens, meaning they are not theme-aware — the same values apply in all color modes.
+
+## CSS import
+
+To use motion tokens, import the base motion CSS file:
+
+```css
+@import "@primer/primitives/dist/css/base/motion/motion.css";
+```
+
+---
+
+## Duration tokens
+
+Duration tokens define animation lengths in milliseconds. They follow the pattern `--base-duration-[value]`.
+
+| Token | Value | Recommended use |
+|---|---|---|
+| `--base-duration-0` | 0ms | Disable animation (reduced motion, instant transitions) |
+| `--base-duration-50` | 50ms | Micro-interactions (hover color changes, icon swaps) |
+| `--base-duration-100` | 100ms | Fast state changes (toggle, checkbox, button feedback) |
+| `--base-duration-200` | 200ms | Short transitions (tooltips appearing, label changes) |
+| `--base-duration-300` | 300ms | Standard transitions (dropdown open, dialog enter) |
+| `--base-duration-400` | 400ms | Medium transitions (page-level content changes) |
+| `--base-duration-500` | 500ms | Slower transitions (modals, expanded panels) |
+| `--base-duration-600` | 600ms | Deliberate motion (onboarding steps, callout reveals) |
+| `--base-duration-700` | 700ms | Slow transitions — use sparingly |
+| `--base-duration-800` | 800ms | Very slow — loading sequences, guided experiences |
+| `--base-duration-900` | 900ms | Extended sequences |
+| `--base-duration-1000` | 1000ms | Maximum duration for most UI animations |
+
+<Warning>
+Always respect the `prefers-reduced-motion` media query. Map durations to `--base-duration-0` for users who prefer reduced motion.
+</Warning>
+
+---
+
+## Easing tokens
+
+Easing tokens define the acceleration curve of an animation. They follow the pattern `--base-easing-[name]` and resolve to `cubic-bezier()` values.
+
+| Token | Curve | Description | When to use |
+|---|---|---|---|
+| `--base-easing-linear` | `cubic-bezier(0, 0, 1, 1)` | Constant velocity, no acceleration | Progress bars, loaders, continuous animations |
+| `--base-easing-ease` | `cubic-bezier(0.25, 0.1, 0.25, 1)` | CSS default; slight ease-in then ease-out | Hover state changes, micro-interactions |
+| `--base-easing-easeIn` | `cubic-bezier(0.7, 0.1, 0.75, 0.9)` | Starts slow, accelerates | Elements moving off-screen (exit animations) |
+| `--base-easing-easeOut` | `cubic-bezier(0.3, 0.8, 0.6, 1)` | Starts fast, decelerates | Elements entering the viewport (recommended default) |
+| `--base-easing-easeInOut` | `cubic-bezier(0.6, 0, 0.2, 1)` | Accelerates then decelerates | Elements moving or morphing within the viewport |
+
+### Choosing the right easing
+
+<AccordionGroup>
+  <Accordion title="Element enters the screen">
+    Use `--base-easing-easeOut`. Decelerating motion feels natural as something arrives into view — it builds speed from the source and settles into position.
+
+    ```css
+    .dialog-enter {
+      animation: slide-in var(--base-duration-300) var(--base-easing-easeOut);
+    }
+    ```
+  </Accordion>
+  <Accordion title="Element exits the screen">
+    Use `--base-easing-easeIn`. Accelerating motion reads as something leaving — it picks up speed as it moves away.
+
+    ```css
+    .dialog-exit {
+      animation: slide-out var(--base-duration-200) var(--base-easing-easeIn);
+    }
+    ```
+  </Accordion>
+  <Accordion title="Element moves within the screen">
+    Use `--base-easing-easeInOut`. Moving between two visible positions should feel smooth and deliberate in both directions.
+
+    ```css
+    .panel-expand {
+      transition: width var(--base-duration-400) var(--base-easing-easeInOut);
+    }
+    ```
+  </Accordion>
+  <Accordion title="Hover state or micro-interaction">
+    Use `--base-easing-ease` for quick interactive feedback with no perceived delay.
+
+    ```css
+    .button {
+      transition: background-color var(--base-duration-100) var(--base-easing-ease);
+    }
+    ```
+  </Accordion>
+  <Accordion title="Continuous animation (spinner, progress)">
+    Use `--base-easing-linear` so the speed is constant and does not feel like it is stalling.
+
+    ```css
+    .spinner {
+      animation: spin var(--base-duration-1000) var(--base-easing-linear) infinite;
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Usage example
+
+```css
+/* Tooltip appearing */
+.tooltip {
+  transition:
+    opacity var(--base-duration-200) var(--base-easing-easeOut),
+    transform var(--base-duration-200) var(--base-easing-easeOut);
+}
+
+/* Modal opening */
+.modal-backdrop {
+  transition: opacity var(--base-duration-300) var(--base-easing-ease);
+}
+
+.modal-dialog {
+  transition: transform var(--base-duration-300) var(--base-easing-easeOut);
+}
+
+/* Reduced motion override */
+@media (prefers-reduced-motion: reduce) {
+  .tooltip,
+  .modal-backdrop,
+  .modal-dialog {
+    transition-duration: var(--base-duration-0);
+  }
+}
+```
+
+---
+
+## Related
+
+- [Motion overview](/tokens/motion) — motion principles and accessibility guidance

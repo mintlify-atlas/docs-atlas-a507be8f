@@ -1,0 +1,284 @@
+---
+title: "Installation"
+description: "Install and configure @primer/primitives in your project, with all CSS import paths and framework-specific setup."
+---
+
+## Install the package
+
+<CodeGroup>
+
+```bash npm
+npm install --save @primer/primitives
+```
+
+```bash yarn
+yarn add @primer/primitives
+```
+
+```bash pnpm
+pnpm add @primer/primitives
+```
+
+</CodeGroup>
+
+The current stable version is **11.6.0**. All CSS files are served from the `dist/` directory inside the package.
+
+## CSS import reference
+
+`@primer/primitives` ships multiple CSS files. Import only what your project needs.
+
+### Size and typography
+
+These files define the base scale and functional spacing, border, viewport, and typography tokens. Import all of them for full coverage.
+
+```css
+/* Raw size scale (base) */
+@import '@primer/primitives/dist/css/base/size/size.css';
+
+/* Raw typography scale (base) */
+@import '@primer/primitives/dist/css/base/typography/typography.css';
+
+/* Functional border widths and radii */
+@import '@primer/primitives/dist/css/functional/size/border.css';
+
+/* Functional breakpoints */
+@import '@primer/primitives/dist/css/functional/size/breakpoints.css';
+
+/* Functional size tokens (control sizes, spacing) */
+@import '@primer/primitives/dist/css/functional/size/size.css';
+
+/* Functional viewport tokens */
+@import '@primer/primitives/dist/css/functional/size/viewport.css';
+
+/* Functional typography tokens (font stacks, shorthand tokens) */
+@import '@primer/primitives/dist/css/functional/typography/typography.css';
+```
+
+### Motion
+
+```css
+/* Duration and easing tokens — required for animated components */
+@import '@primer/primitives/dist/css/base/motion/motion.css';
+```
+
+<Warning>
+Motion CSS is required for components with animations, such as `Spinner` from `@primer/react`. If animated components appear static, verify you have imported this file.
+</Warning>
+
+### Color themes
+
+Import the color themes your application supports. Each file scopes its tokens to the appropriate `data-color-mode` / `data-light-theme` / `data-dark-theme` attributes.
+
+```css
+/* Light themes */
+@import '@primer/primitives/dist/css/functional/themes/light.css';
+@import '@primer/primitives/dist/css/functional/themes/light-high-contrast.css';
+@import '@primer/primitives/dist/css/functional/themes/light-colorblind.css';
+@import '@primer/primitives/dist/css/functional/themes/light-tritanopia.css';
+
+/* Dark themes */
+@import '@primer/primitives/dist/css/functional/themes/dark.css';
+@import '@primer/primitives/dist/css/functional/themes/dark-dimmed.css';
+@import '@primer/primitives/dist/css/functional/themes/dark-high-contrast.css';
+@import '@primer/primitives/dist/css/functional/themes/dark-colorblind.css';
+@import '@primer/primitives/dist/css/functional/themes/dark-tritanopia.css';
+```
+
+### Imports by use case
+
+| Goal | Required imports |
+|---|---|
+| Color theming only | One or more theme files |
+| Typography | `base/typography/typography.css` + `functional/typography/typography.css` |
+| Spacing and layout | `base/size/size.css` + `functional/size/size.css` |
+| Borders and radii | `functional/size/border.css` |
+| Responsive breakpoints | `functional/size/breakpoints.css` |
+| Animated components | `base/motion/motion.css` |
+| Full Primer setup | All of the above |
+
+## Framework setup
+
+<Tabs>
+  <Tab title="Vanilla CSS">
+    Import the CSS files directly in your HTML `<head>`. Apply the theme attribute to the root element.
+
+    ```html index.html
+    <!DOCTYPE html>
+    <html data-color-mode="auto"
+          data-light-theme="light"
+          data-dark-theme="dark">
+      <head>
+        <style>
+          @import '@primer/primitives/dist/css/base/size/size.css';
+          @import '@primer/primitives/dist/css/base/typography/typography.css';
+          @import '@primer/primitives/dist/css/functional/size/border.css';
+          @import '@primer/primitives/dist/css/functional/size/size.css';
+          @import '@primer/primitives/dist/css/functional/typography/typography.css';
+          @import '@primer/primitives/dist/css/base/motion/motion.css';
+          @import '@primer/primitives/dist/css/functional/themes/light.css';
+          @import '@primer/primitives/dist/css/functional/themes/dark.css';
+        </style>
+      </head>
+      <body>
+        <p style="color: var(--fgColor-default); background: var(--bgColor-default);">
+          Themed content
+        </p>
+      </body>
+    </html>
+    ```
+  </Tab>
+  <Tab title="React">
+    Import the CSS files once in your app entry point (e.g. `index.js` or `App.js`). Set the theme attribute on the `<html>` element using `document.documentElement`.
+
+    ```javascript src/index.js
+    import '@primer/primitives/dist/css/base/size/size.css';
+    import '@primer/primitives/dist/css/base/typography/typography.css';
+    import '@primer/primitives/dist/css/functional/size/border.css';
+    import '@primer/primitives/dist/css/functional/size/size.css';
+    import '@primer/primitives/dist/css/functional/typography/typography.css';
+    import '@primer/primitives/dist/css/base/motion/motion.css';
+    import '@primer/primitives/dist/css/functional/themes/light.css';
+    import '@primer/primitives/dist/css/functional/themes/dark.css';
+
+    import React from 'react';
+    import ReactDOM from 'react-dom/client';
+    import App from './App';
+
+    // Apply theme to root element
+    document.documentElement.setAttribute('data-color-mode', 'auto');
+    document.documentElement.setAttribute('data-light-theme', 'light');
+    document.documentElement.setAttribute('data-dark-theme', 'dark');
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    ```
+
+    Then use tokens in your component CSS files or CSS modules:
+
+    ```css Button.module.css
+    .button {
+      background-color: var(--bgColor-accent-emphasis);
+      color: var(--fgColor-onEmphasis);
+      border-radius: var(--borderRadius-medium);
+      padding-block: var(--control-medium-paddingBlock);
+      padding-inline: var(--control-medium-paddingInline-normal);
+      font: var(--text-body-shorthand-medium);
+    }
+    ```
+  </Tab>
+  <Tab title="Next.js">
+    Import the CSS files in your root layout (`app/layout.tsx`) or global styles file. Set theme attributes on the `<html>` element directly in the JSX.
+
+    ```typescript app/layout.tsx
+    import '@primer/primitives/dist/css/base/size/size.css';
+    import '@primer/primitives/dist/css/base/typography/typography.css';
+    import '@primer/primitives/dist/css/functional/size/border.css';
+    import '@primer/primitives/dist/css/functional/size/size.css';
+    import '@primer/primitives/dist/css/functional/typography/typography.css';
+    import '@primer/primitives/dist/css/base/motion/motion.css';
+    import '@primer/primitives/dist/css/functional/themes/light.css';
+    import '@primer/primitives/dist/css/functional/themes/dark.css';
+
+    export default function RootLayout({
+      children,
+    }: {
+      children: React.ReactNode
+    }) {
+      return (
+        <html
+          lang="en"
+          data-color-mode="auto"
+          data-light-theme="light"
+          data-dark-theme="dark"
+        >
+          <body>{children}</body>
+        </html>
+      )
+    }
+    ```
+
+    <Note>
+    Next.js requires that CSS imports from `node_modules` appear in the root layout or a global CSS file. Importing them inside a page or component will cause an error.
+    </Note>
+  </Tab>
+  <Tab title="Vite">
+    Import the CSS files in your entry point (`main.ts` or `main.js`).
+
+    ```typescript src/main.ts
+    import '@primer/primitives/dist/css/base/size/size.css';
+    import '@primer/primitives/dist/css/base/typography/typography.css';
+    import '@primer/primitives/dist/css/functional/size/border.css';
+    import '@primer/primitives/dist/css/functional/size/size.css';
+    import '@primer/primitives/dist/css/functional/typography/typography.css';
+    import '@primer/primitives/dist/css/base/motion/motion.css';
+    import '@primer/primitives/dist/css/functional/themes/light.css';
+    import '@primer/primitives/dist/css/functional/themes/dark.css';
+
+    import { createApp } from 'vue' // or your framework of choice
+    import App from './App.vue'
+
+    document.documentElement.setAttribute('data-color-mode', 'auto');
+    document.documentElement.setAttribute('data-light-theme', 'light');
+    document.documentElement.setAttribute('data-dark-theme', 'dark');
+
+    createApp(App).mount('#app');
+    ```
+
+    No additional Vite plugin configuration is required — Vite handles `node_modules` CSS imports out of the box.
+  </Tab>
+</Tabs>
+
+## Applying themes
+
+Color tokens are applied by setting attributes on a container element (usually `<html>`). The three relevant attributes are:
+
+| Attribute | Values | Description |
+|---|---|---|
+| `data-color-mode` | `light`, `dark`, `auto` | Active mode. `auto` follows the OS preference via `prefers-color-scheme`. |
+| `data-light-theme` | Any light theme name | Which light theme to use when mode is `light` or `auto`. |
+| `data-dark-theme` | Any dark theme name | Which dark theme to use when mode is `dark` or `auto`. |
+
+**Available theme names:**
+
+<AccordionGroup>
+  <Accordion title="Light themes">
+    | Attribute value | CSS file |
+    |---|---|
+    | `light` | `themes/light.css` |
+    | `light_high_contrast` | `themes/light-high-contrast.css` |
+    | `light_colorblind` | `themes/light-colorblind.css` |
+    | `light_tritanopia` | `themes/light-tritanopia.css` |
+  </Accordion>
+  <Accordion title="Dark themes">
+    | Attribute value | CSS file |
+    |---|---|
+    | `dark` | `themes/dark.css` |
+    | `dark_dimmed` | `themes/dark-dimmed.css` |
+    | `dark_high_contrast` | `themes/dark-high-contrast.css` |
+    | `dark_colorblind` | `themes/dark-colorblind.css` |
+    | `dark_tritanopia` | `themes/dark-tritanopia.css` |
+  </Accordion>
+</AccordionGroup>
+
+## Version compatibility
+
+| `@primer/primitives` version | Node.js | Notes |
+|---|---|---|
+| 11.x (current) | 18+ | W3C DTCG token format, z-index tokens, negative size tokens |
+| 10.x | 16+ | Legacy dimension format |
+
+<Note>
+Version 11.x changed dimension token format to W3C DTCG object format (`{ value: number, unit: "px" }`). If you are using custom Style Dictionary transformers that read token values directly, update them to handle the new format.
+</Note>
+
+The package is distributed as an ES module (`"type": "module"` in `package.json`). If your build toolchain requires CommonJS, configure your bundler to transform the package accordingly.
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Quick start" icon="rocket" href="/quickstart">
+    See a working styled element built with Primer Primitives tokens.
+  </Card>
+  <Card title="Introduction" icon="book" href="/introduction">
+    Understand the token architecture and all available token categories.
+  </Card>
+</CardGroup>
